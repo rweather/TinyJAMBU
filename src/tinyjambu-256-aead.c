@@ -21,8 +21,8 @@
  */
 
 #include "TinyJAMBU.h"
-#include "internal-tinyjambu.h"
-#include "internal-util.h"
+#include "tinyjambu-backend.h"
+#include "tinyjambu-util.h"
 
 /**
  * \brief Set up the TinyJAMBU-256 state with the key and the nonce
@@ -248,5 +248,5 @@ int tinyjambu_256_aead_decrypt
 
     /* Check the authentication tag */
     tinyjambu_generate_tag_256(&state, key, tag);
-    return aead_check_tag(mtemp, *mlen, tag, c, TINYJAMBU_TAG_SIZE);
+    return tinyjambu_aead_check_tag(mtemp, *mlen, tag, c, TINYJAMBU_TAG_SIZE);
 }
