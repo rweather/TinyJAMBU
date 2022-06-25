@@ -25,18 +25,6 @@
 
 #if defined(TINYJAMBU_BACKEND_C32)
 
-/* Note: The last line should contain ~(t2 & t3) according to the
- * specification but we can avoid the NOT by inverting the words
- * of the key ahead of time. */
-#define tinyjambu_steps_32(s0, s1, s2, s3, kword) \
-    do { \
-        t1 = (s1 >> 15) | (s2 << 17); \
-        t2 = (s2 >> 6)  | (s3 << 26); \
-        t3 = (s2 >> 21) | (s3 << 11); \
-        t4 = (s2 >> 27) | (s3 << 5); \
-        s0 ^= t1 ^ (t2 & t3) ^ t4 ^ kword; \
-    } while (0)
-
 void tinyjambu_permutation_256
     (tinyjambu_state_t *state, const tinyjambu_key_word_t *key,
      unsigned rounds)

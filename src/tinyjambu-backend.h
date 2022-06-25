@@ -211,6 +211,32 @@ void tinyjambu_permutation_256
     (tinyjambu_state_t *state, const tinyjambu_key_word_t *key,
      unsigned rounds);
 
+/* Note: The last line should contain ~(t2 & t3) according to the
+ * specification but we can avoid the NOT by inverting the words
+ * of the key ahead of time. */
+#define tinyjambu_steps_32(s0, s1, s2, s3, kword) \
+    do { \
+        t1 = (s1 >> 15) | (s2 << 17); \
+        t2 = (s2 >> 6)  | (s3 << 26); \
+        t3 = (s2 >> 21) | (s3 << 11); \
+        t4 = (s2 >> 27) | (s3 << 5); \
+        s0 ^= t1 ^ (t2 & t3) ^ t4 ^ kword; \
+    } while (0)
+
+/* Perform 64 steps of the TinyJAMBU permutation on 64-bit platforms */
+#define tinyjambu_steps_64(s0, s2, kword0, kword1) \
+    do { \
+        t1 = (s0 >> 47) | (s2 << 17); \
+        t2 = (s2 >> 6); \
+        t3 = (s2 >> 21); \
+        t4 = (s2 >> 27); \
+        s0 ^= t1 ^ (uint32_t)((t2 & t3) ^ t4 ^ kword0); \
+        t2 |= (s0 << 58); \
+        t3 |= (s0 << 43); \
+        t4 |= (s0 << 37); \
+        s0 ^= ((t2 & t3) ^ t4 ^ kword1) & 0xFFFFFFFF00000000ULL; \
+    } while (0)
+
 #ifdef __cplusplus
 }
 #endif

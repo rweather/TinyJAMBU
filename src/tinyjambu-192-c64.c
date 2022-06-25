@@ -25,20 +25,6 @@
 
 #if defined(TINYJAMBU_BACKEND_C64)
 
-/* Perform 64 steps of the TinyJAMBU permutation on 64-bit platforms */
-#define tinyjambu_steps_64(s0, s2, kword0, kword1) \
-    do { \
-        t1 = (s0 >> 47) | (s2 << 17); \
-        t2 = (s2 >> 6); \
-        t3 = (s2 >> 21); \
-        t4 = (s2 >> 27); \
-        s0 ^= t1 ^ (uint32_t)((t2 & t3) ^ t4 ^ kword0); \
-        t2 |= (s0 << 58); \
-        t3 |= (s0 << 43); \
-        t4 |= (s0 << 37); \
-        s0 ^= ((t2 & t3) ^ t4 ^ kword1) & 0xFFFFFFFF00000000ULL; \
-    } while (0)
-
 void tinyjambu_permutation_192
     (tinyjambu_state_t *state, const tinyjambu_key_word_t *key,
      unsigned rounds)

@@ -47,12 +47,15 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 set(ASM_OPTIONS "-x assembler-with-cpp")
 set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} ${ASM_OPTIONS}")
 
+# Set up the main include directory.
+include_directories(src)
+
 # Add the subdirectories.
 add_subdirectory(src)
-#if(NOT MINIMAL)
-#    add_subdirectory(test)
+if(NOT MINIMAL)
+    add_subdirectory(test)
 #    add_subdirectory(examples EXCLUDE_FROM_ALL)
-#endif()
+endif()
 
 # Enable testing support.
 enable_testing()

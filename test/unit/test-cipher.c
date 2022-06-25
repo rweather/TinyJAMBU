@@ -20,39 +20,34 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include "tinyjambu-backend.h"
-#include "tinyjambu-util.h"
+#include "test-cipher.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#if defined(TINYJAMBU_BACKEND_C64)
+int test_exit_result = 0;
 
-void tinyjambu_permutation_256
-    (tinyjambu_state_t *state, const tinyjambu_key_word_t *key,
-     unsigned rounds)
+static void test_print_hex
+    (const char *tag, const unsigned char *data, unsigned long long len)
 {
-    uint64_t t1, t2, t3, t4;
-
-    /* Load the state into local variables */
-    uint64_t s0 = state->t[0];
-    uint64_t s2 = state->t[1];
-
-    /* Perform all permutation rounds 128 at a time */
-    for (; rounds > 0; --rounds) {
-        /* Perform the first set of 128 steps */
-        tinyjambu_steps_64(s0, s2, key[0], key[1]);
-        tinyjambu_steps_64(s2, s0, key[2], key[3]);
-
-        /* Bail out if this is the last round */
-        if ((--rounds) == 0)
-            break;
-
-        /* Perform the second set of 128 steps */
-        tinyjambu_steps_64(s0, s2, key[4], key[5]);
-        tinyjambu_steps_64(s2, s0, key[6], key[7]);
+    printf("%s =", tag);
+    while (len > 0) {
+        printf(" %02x", data[0]);
+        ++data;
+        --len;
     }
-
-    /* Store the local variables back to the state */
-    state->t[0] = s0;
-    state->t[1] = s2;
+    printf("\n");
 }
 
-#endif /* TINYJAMBU_BACKEND_C64 */
+int test_memcmp
+    (const unsigned char *actual, const unsigned char *expected,
+     unsigned long long len)
+{
+    int cmp = memcmp(actual, expected, (size_t)len);
+    if (cmp == 0)
+        return 0;
+    printf("\n");
+    test_print_hex("actual  ", actual, len);
+    test_print_hex("expected", expected, len);
+    return cmp;
+}
