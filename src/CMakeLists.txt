@@ -2,8 +2,14 @@
 list(APPEND TINYJAMBU_SOURCES
     TinyJAMBU.h
     tinyjambu-128-aead.c
+    tinyjambu-128-c32.c
+    tinyjambu-128-c64.c
     tinyjambu-192-aead.c
+    tinyjambu-192-c32.c
+    tinyjambu-192-c64.c
     tinyjambu-256-aead.c
+    tinyjambu-256-c32.c
+    tinyjambu-256-c64.c
     tinyjambu-backend.h
     tinyjambu-util.c
     tinyjambu-util.h

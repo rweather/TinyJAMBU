@@ -34,20 +34,41 @@
 extern "C" {
 #endif
 
-/** @cond tinyjambu_64 */
-#if defined(LW_UTIL_CPU_IS_64BIT)
-#define TINYJAMBU_64BIT 1
+/* Select the default back end to use for the TinyJAMBU permutation,
+ * and any properties we can use to optimize use of the permutation. */
+
+#if defined(TINYJAMBU_FORCE_C32)
+
+/* Force the use of the "c32" backend for testing purposes */
+#define TINYJAMBU_BACKEND_C32 1
+#define TINYJAMBU_BACKEND_WORD32 1
+
+#elif defined(TINYJAMBU_FORCE_C64)
+
+/* Force the use of the "c64" backend for testing purposes */
+#define TINYJAMBU_BACKEND_C64 1
+#define TINYJAMBU_BACKEND_WORD64 1
+
+#elif defined(LW_UTIL_CPU_IS_64BIT)
+
+/* C backend for 64-bit systems */
+#define TINYJAMBU_BACKEND_C64 1
+#define TINYJAMBU_BACKEND_WORD64 1
+
 #else
-#define TINYJAMBU_64BIT 0
+
+/* C backend for 32-bit systems */
+#define TINYJAMBU_BACKEND_C32 1
+#define TINYJAMBU_BACKEND_WORD32 1
+
 #endif
-/** @endcond */
 
 /**
  * \brief TinyJAMBU permutation state.
  */
 typedef struct
 {
-#if TINYJAMBU_64BIT
+#if defined(TINYJAMBU_BACKEND_WORD64)
     uint64_t t[2];      /**< State as 64-bit words */
 #else
     uint32_t s[4];      /**< State as 32-bit words */
@@ -58,7 +79,7 @@ typedef struct
  * \typedef tinyjambu_key_word_t
  * \brief Size of a word in the key schedule (32 or 64 bits).
  */
-#if TINYJAMBU_64BIT
+#if defined(TINYJAMBU_BACKEND_WORD64)
 typedef uint64_t tinyjambu_key_word_t;
 #else
 typedef uint32_t tinyjambu_key_word_t;
@@ -78,7 +99,7 @@ typedef uint32_t tinyjambu_key_word_t;
  * \param ptr Points to the 4 bytes of the key word in little-endian order.
  * \return The key word.
  */
-#if TINYJAMBU_64BIT
+#if defined(TINYJAMBU_BACKEND_WORD64)
 #define tinyjambu_key_load_even(ptr) \
     ((tinyjambu_key_word_t)(~(le_load_word32((ptr)))))
 #define tinyjambu_key_load_odd(ptr) \
@@ -117,7 +138,7 @@ typedef uint32_t tinyjambu_key_word_t;
  * \param state TinyJAMBU state to squeeze from.
  * \return Word value that was squeezed out.
  */
-#if TINYJAMBU_64BIT
+#if defined(TINYJAMBU_BACKEND_WORD64)
 #define tinyjambu_init_state(state) \
     ((state)->t[0] = (state)->t[1] = 0)
 #define tinyjambu_add_domain(state, domain) \
