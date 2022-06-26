@@ -12,6 +12,8 @@ The following implementations are provided:
 * `c32`: Plain C for 32-bit platforms
 * `c64`: Plain C for 64-bit platforms
 * `avr5`: Assembly code for AVR5 platforms; e.g. Arduino Uno and Arduino Mega.
+* `armv6`: Assembly code for ARMv6 platforms such as Raspberry Pi 3.
+* `armv6m`: Assembly code for ARMv6-M platforms such as ARM Cortex M0 and M0+.
 * `armv7m`: Assembly code for ARMv7-M platforms such as ARM Cortex M3,
 ARM Cortex M4, ARM Cortex M7.  Should also work on ARMv8-M platforms such as
 ARM Cortex M33.
