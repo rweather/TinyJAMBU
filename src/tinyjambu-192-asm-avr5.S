@@ -51,8 +51,10 @@ tinyjambu_permutation_192:
 	push r13
 	push r14
 	push r15
+	push r16
+	push r17
 	movw r30,r24
-.L__stack_usage = 16
+.L__stack_usage = 18
 	ld r18,Z
 	ldd r19,Z+1
 	ldd r20,Z+2
@@ -82,53 +84,45 @@ tinyjambu_permutation_192:
 	eor r19,r15
 	eor r20,r24
 	eor r21,r25
-	mov r12,r5
-	mov r13,r6
-	mov r14,r7
-	mov r15,r8
-	mov r0,r4
-	lsl r0
-	rol r12
+	movw r24,r4
+	movw r16,r6
+	mov r23,r8
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r6
+	movw r14,r8
+	mov r24,r10
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r7
-	mov r0,r6
-	mov r25,r8
-	mov r23,r9
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r9
-	mov r25,r10
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r18,r12
-	eor r19,r13
-	eor r20,r14
-	eor r21,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r18,r25
+	eor r19,r16
+	eor r20,r17
+	eor r21,r23
 	movw r14,r8
 	movw r24,r10
 	mov r13,r7
@@ -171,53 +165,45 @@ tinyjambu_permutation_192:
 	eor r27,r15
 	eor r2,r24
 	eor r3,r25
-	mov r12,r9
-	mov r13,r10
-	mov r14,r11
-	mov r15,r18
-	mov r0,r8
-	lsl r0
-	rol r12
+	movw r24,r8
+	movw r16,r10
+	mov r23,r18
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r10
+	movw r14,r18
+	mov r24,r20
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r11
-	mov r0,r10
-	mov r25,r18
-	mov r23,r19
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r19
-	mov r25,r20
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r26,r12
-	eor r27,r13
-	eor r2,r14
-	eor r3,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r26,r25
+	eor r27,r16
+	eor r2,r17
+	eor r3,r23
 	movw r14,r18
 	movw r24,r20
 	mov r13,r11
@@ -260,53 +246,45 @@ tinyjambu_permutation_192:
 	eor r5,r15
 	eor r6,r24
 	eor r7,r25
-	mov r12,r19
-	mov r13,r20
-	mov r14,r21
-	mov r15,r26
-	mov r0,r18
-	lsl r0
-	rol r12
+	movw r24,r18
+	movw r16,r20
+	mov r23,r26
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r20
+	movw r14,r26
+	mov r24,r2
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r21
-	mov r0,r20
-	mov r25,r26
-	mov r23,r27
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r27
-	mov r25,r2
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r4,r12
-	eor r5,r13
-	eor r6,r14
-	eor r7,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r4,r25
+	eor r5,r16
+	eor r6,r17
+	eor r7,r23
 	movw r14,r26
 	movw r24,r2
 	mov r13,r21
@@ -349,53 +327,45 @@ tinyjambu_permutation_192:
 	eor r9,r15
 	eor r10,r24
 	eor r11,r25
-	mov r12,r27
-	mov r13,r2
-	mov r14,r3
-	mov r15,r4
-	mov r0,r26
-	lsl r0
-	rol r12
+	movw r24,r26
+	movw r16,r2
+	mov r23,r4
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r2
+	movw r14,r4
+	mov r24,r6
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r3
-	mov r0,r2
-	mov r25,r4
-	mov r23,r5
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r5
-	mov r25,r6
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r8,r12
-	eor r9,r13
-	eor r10,r14
-	eor r11,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r8,r25
+	eor r9,r16
+	eor r10,r17
+	eor r11,r23
 	movw r14,r4
 	movw r24,r6
 	mov r13,r3
@@ -427,9 +397,9 @@ tinyjambu_permutation_192:
 	ldd r0,Z+31
 	eor r11,r0
 	dec r22
-	brne 5374f
-	rjmp 1091f
-5374:
+	brne 5342f
+	rjmp 995f
+5342:
 	movw r14,r2
 	movw r24,r4
 	mov r13,r27
@@ -442,53 +412,45 @@ tinyjambu_permutation_192:
 	eor r19,r15
 	eor r20,r24
 	eor r21,r25
-	mov r12,r5
-	mov r13,r6
-	mov r14,r7
-	mov r15,r8
-	mov r0,r4
-	lsl r0
-	rol r12
+	movw r24,r4
+	movw r16,r6
+	mov r23,r8
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r6
+	movw r14,r8
+	mov r24,r10
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r7
-	mov r0,r6
-	mov r25,r8
-	mov r23,r9
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r9
-	mov r25,r10
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r18,r12
-	eor r19,r13
-	eor r20,r14
-	eor r21,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r18,r25
+	eor r19,r16
+	eor r20,r17
+	eor r21,r23
 	movw r14,r8
 	movw r24,r10
 	mov r13,r7
@@ -531,53 +493,45 @@ tinyjambu_permutation_192:
 	eor r27,r15
 	eor r2,r24
 	eor r3,r25
-	mov r12,r9
-	mov r13,r10
-	mov r14,r11
-	mov r15,r18
-	mov r0,r8
-	lsl r0
-	rol r12
+	movw r24,r8
+	movw r16,r10
+	mov r23,r18
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r10
+	movw r14,r18
+	mov r24,r20
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r11
-	mov r0,r10
-	mov r25,r18
-	mov r23,r19
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r19
-	mov r25,r20
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r26,r12
-	eor r27,r13
-	eor r2,r14
-	eor r3,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r26,r25
+	eor r27,r16
+	eor r2,r17
+	eor r3,r23
 	movw r14,r18
 	movw r24,r20
 	mov r13,r11
@@ -620,53 +574,45 @@ tinyjambu_permutation_192:
 	eor r5,r15
 	eor r6,r24
 	eor r7,r25
-	mov r12,r19
-	mov r13,r20
-	mov r14,r21
-	mov r15,r26
-	mov r0,r18
-	lsl r0
-	rol r12
+	movw r24,r18
+	movw r16,r20
+	mov r23,r26
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r20
+	movw r14,r26
+	mov r24,r2
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r21
-	mov r0,r20
-	mov r25,r26
-	mov r23,r27
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r27
-	mov r25,r2
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r4,r12
-	eor r5,r13
-	eor r6,r14
-	eor r7,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r4,r25
+	eor r5,r16
+	eor r6,r17
+	eor r7,r23
 	movw r14,r26
 	movw r24,r2
 	mov r13,r21
@@ -709,53 +655,45 @@ tinyjambu_permutation_192:
 	eor r9,r15
 	eor r10,r24
 	eor r11,r25
-	mov r12,r27
-	mov r13,r2
-	mov r14,r3
-	mov r15,r4
-	mov r0,r26
-	lsl r0
-	rol r12
+	movw r24,r26
+	movw r16,r2
+	mov r23,r4
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r2
+	movw r14,r4
+	mov r24,r6
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r3
-	mov r0,r2
-	mov r25,r4
-	mov r23,r5
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r5
-	mov r25,r6
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r8,r12
-	eor r9,r13
-	eor r10,r14
-	eor r11,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r8,r25
+	eor r9,r16
+	eor r10,r17
+	eor r11,r23
 	movw r14,r4
 	movw r24,r6
 	mov r13,r3
@@ -787,9 +725,9 @@ tinyjambu_permutation_192:
 	ldd r0,Z+23
 	eor r11,r0
 	dec r22
-	brne 5732f
-	rjmp 1091f
-5732:
+	brne 5668f
+	rjmp 995f
+5668:
 	movw r14,r2
 	movw r24,r4
 	mov r13,r27
@@ -802,53 +740,45 @@ tinyjambu_permutation_192:
 	eor r19,r15
 	eor r20,r24
 	eor r21,r25
-	mov r12,r5
-	mov r13,r6
-	mov r14,r7
-	mov r15,r8
-	mov r0,r4
-	lsl r0
-	rol r12
+	movw r24,r4
+	movw r16,r6
+	mov r23,r8
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r6
+	movw r14,r8
+	mov r24,r10
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r7
-	mov r0,r6
-	mov r25,r8
-	mov r23,r9
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r9
-	mov r25,r10
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r18,r12
-	eor r19,r13
-	eor r20,r14
-	eor r21,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r18,r25
+	eor r19,r16
+	eor r20,r17
+	eor r21,r23
 	movw r14,r8
 	movw r24,r10
 	mov r13,r7
@@ -891,53 +821,45 @@ tinyjambu_permutation_192:
 	eor r27,r15
 	eor r2,r24
 	eor r3,r25
-	mov r12,r9
-	mov r13,r10
-	mov r14,r11
-	mov r15,r18
-	mov r0,r8
-	lsl r0
-	rol r12
+	movw r24,r8
+	movw r16,r10
+	mov r23,r18
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r10
+	movw r14,r18
+	mov r24,r20
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r11
-	mov r0,r10
-	mov r25,r18
-	mov r23,r19
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r19
-	mov r25,r20
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r26,r12
-	eor r27,r13
-	eor r2,r14
-	eor r3,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r26,r25
+	eor r27,r16
+	eor r2,r17
+	eor r3,r23
 	movw r14,r18
 	movw r24,r20
 	mov r13,r11
@@ -980,53 +902,45 @@ tinyjambu_permutation_192:
 	eor r5,r15
 	eor r6,r24
 	eor r7,r25
-	mov r12,r19
-	mov r13,r20
-	mov r14,r21
-	mov r15,r26
-	mov r0,r18
-	lsl r0
-	rol r12
+	movw r24,r18
+	movw r16,r20
+	mov r23,r26
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r20
+	movw r14,r26
+	mov r24,r2
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r21
-	mov r0,r20
-	mov r25,r26
-	mov r23,r27
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r27
-	mov r25,r2
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r4,r12
-	eor r5,r13
-	eor r6,r14
-	eor r7,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r4,r25
+	eor r5,r16
+	eor r6,r17
+	eor r7,r23
 	movw r14,r26
 	movw r24,r2
 	mov r13,r21
@@ -1069,53 +983,45 @@ tinyjambu_permutation_192:
 	eor r9,r15
 	eor r10,r24
 	eor r11,r25
-	mov r12,r27
-	mov r13,r2
-	mov r14,r3
-	mov r15,r4
-	mov r0,r26
-	lsl r0
-	rol r12
+	movw r24,r26
+	movw r16,r2
+	mov r23,r4
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	lsl r24
+	rol r25
+	rol r16
+	rol r17
+	rol r23
+	movw r12,r2
+	movw r14,r4
+	mov r24,r6
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	lsl r0
-	rol r12
+	rol r24
+	lsl r12
 	rol r13
 	rol r14
 	rol r15
-	mov r24,r3
-	mov r0,r2
-	mov r25,r4
-	mov r23,r5
-	lsl r0
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
+	lsl r12
+	rol r13
+	rol r14
+	rol r15
 	rol r24
-	rol r25
-	rol r23
-	lsl r0
-	rol r24
-	rol r25
-	rol r23
-	and r12,r24
-	and r13,r25
-	and r14,r23
-	mov r24,r5
-	mov r25,r6
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	lsl r24
-	rol r25
-	and r15,r25
-	eor r8,r12
-	eor r9,r13
-	eor r10,r14
-	eor r11,r15
+	and r25,r13
+	and r16,r14
+	and r17,r15
+	and r23,r24
+	eor r8,r25
+	eor r9,r16
+	eor r10,r17
+	eor r11,r23
 	movw r14,r4
 	movw r24,r6
 	mov r13,r3
@@ -1147,10 +1053,10 @@ tinyjambu_permutation_192:
 	ldd r0,Z+39
 	eor r11,r0
 	dec r22
-	breq 6090f
+	breq 5994f
 	rjmp 16b
-6090:
-1091:
+5994:
+995:
 	st Z,r18
 	std Z+1,r19
 	std Z+2,r20
@@ -1167,6 +1073,8 @@ tinyjambu_permutation_192:
 	std Z+13,r9
 	std Z+14,r10
 	std Z+15,r11
+	pop r17
+	pop r16
 	pop r15
 	pop r14
 	pop r13
