@@ -82,25 +82,12 @@ static void state_to_output(uint32_t *state)
 #endif
 }
 
-static void invert_key
-    (tinyjambu_key_word_t *out, const uint32_t *in, unsigned count)
+static void invert_key(uint32_t *out, const uint32_t *in, unsigned count)
 {
-#if defined(TINYJAMBU_BACKEND_WORD64)
-    int even = 1;
-    while (count > 0) {
-        if (even)
-            *out++ = (tinyjambu_key_word_t)(~(*in++));
-        else
-            *out++ = (tinyjambu_key_word_t)(~(*in++)) << 32;
-        --count;
-        even = !even;
-    }
-#else
     while (count > 0) {
         *out++ = ~(*in++);
         --count;
     }
-#endif
 }
 
 void test_tinyjambu_permutation(void)

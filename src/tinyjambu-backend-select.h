@@ -39,62 +39,38 @@ extern "C" {
 
 /* Force the use of the "c32" backend for testing purposes */
 #define TINYJAMBU_BACKEND_C32 1
-#define TINYJAMBU_BACKEND_WORD32 1
-
-#elif defined(TINYJAMBU_FORCE_C64)
-
-/* Force the use of the "c64" backend for testing purposes */
-#define TINYJAMBU_BACKEND_C64 1
-#define TINYJAMBU_BACKEND_WORD64 1
 
 #elif defined(__AVR__) && __AVR_ARCH__ >= 5
 
 /* AVR5 assembly code backend */
 #define TINYJAMBU_BACKEND_AVR5 1
-#define TINYJAMBU_BACKEND_WORD32 1
 
 #elif defined(__ARM_ARCH_ISA_THUMB) && __ARM_ARCH == 8 && defined(__ARM_ARCH_8M__)
 
 /* Assembly backend for ARMv8-M systems; e.g. ARM Cortex M33 */
 /* This can actually use the same backend as ARMv7-M systems */
 #define TINYJAMBU_BACKEND_ARMV7M 1
-#define TINYJAMBU_BACKEND_WORD32 1
 
 #elif defined(__ARM_ARCH_ISA_THUMB) && __ARM_ARCH == 7
 
 /* Assembly backend for ARMv7-M systems; e.g. ARM Cortex M3, M4, and M7 */
 /* This backend has also been tested to work on ARMv7-A systems */
 #define TINYJAMBU_BACKEND_ARMV7M 1
-#define TINYJAMBU_BACKEND_WORD32 1
 
 #elif defined(__ARM_ARCH_ISA_THUMB) && __ARM_ARCH == 6 && defined(__ARM_ARCH_6M__)
 
 /* Assembly backend for ARMv6-M systems; e.g. ARM Cortex M0+ */
 #define TINYJAMBU_BACKEND_ARMV6M 1
-#define TINYJAMBU_BACKEND_WORD32 1
 
 #elif defined(__ARM_ARCH) && __ARM_ARCH == 6
 
 /* Assembly backend for ARMv6 systems, should work with thumb and non-thumb */
 #define TINYJAMBU_BACKEND_ARMV6 1
-#define TINYJAMBU_BACKEND_WORD32 1
-
-/* Assembly backend for ARMv6 systems, should work with thumb and non-thumb */
-
-#elif defined(__x86_64) || defined(__x86_64__) || \
-      defined(__aarch64__) || defined(__ARM_ARCH_ISA_A64) || \
-      defined(_M_AMD64) || defined(_M_X64) || defined(_M_IA64) || \
-      (defined(__riscv) && __riscv_xlen == 64)
-
-/* C backend for 64-bit systems */
-#define TINYJAMBU_BACKEND_C64 1
-#define TINYJAMBU_BACKEND_WORD64 1
 
 #else
 
-/* C backend for 32-bit systems */
+/* Plain C backend */
 #define TINYJAMBU_BACKEND_C32 1
-#define TINYJAMBU_BACKEND_WORD32 1
 
 #endif
 

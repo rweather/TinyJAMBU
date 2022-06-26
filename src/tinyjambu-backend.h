@@ -36,37 +36,12 @@ extern "C" {
 #endif
 
 /**
- * \typedef tinyjambu_key_word_t
- * \brief Size of a word in the key schedule (32 or 64 bits).
- */
-#if defined(TINYJAMBU_BACKEND_WORD64)
-typedef uint64_t tinyjambu_key_word_t;
-#else
-typedef uint32_t tinyjambu_key_word_t;
-#endif
-
-/**
- * \brief TinyJAMBU permutation state.
- */
-typedef struct
-{
-    union {
-        uint64_t t[2];      /**< State as 64-bit words */
-        uint32_t s[4];      /**< State as 32-bit words */
-    };
-
-} tinyjambu_state_t;
-
-/**
  * \brief TinyJAMBU-128 permutation state.
  */
 typedef struct
 {
-    union {
-        uint64_t t[2];          /**< State as 64-bit words */
-        uint32_t s[4];          /**< State as 32-bit words */
-    };
-    tinyjambu_key_word_t k[4];  /**< Words of the key, pre-inverted */
+    uint32_t s[4];  /**< State as 32-bit words */
+    uint32_t k[4];  /**< Words of the key, pre-inverted */
 
 } tinyjambu_128_state_t;
 
@@ -75,11 +50,8 @@ typedef struct
  */
 typedef struct
 {
-    union {
-        uint64_t t[2];          /**< State as 64-bit words */
-        uint32_t s[4];          /**< State as 32-bit words */
-    };
-    tinyjambu_key_word_t k[6];  /**< Words of the key, pre-inverted */
+    uint32_t s[4];  /**< State as 32-bit words */
+    uint32_t k[6];  /**< Words of the key, pre-inverted */
 
 } tinyjambu_192_state_t;
 
@@ -88,84 +60,60 @@ typedef struct
  */
 typedef struct
 {
-    union {
-        uint64_t t[2];          /**< State as 64-bit words */
-        uint32_t s[4];          /**< State as 32-bit words */
-    };
-    tinyjambu_key_word_t k[8];  /**< Words of the key, pre-inverted */
+    uint32_t s[4];  /**< State as 32-bit words */
+    uint32_t k[8];  /**< Words of the key, pre-inverted */
 
 } tinyjambu_256_state_t;
 
 /**
- * \def tinyjambu_key_load_even(ptr)
  * \brief Loads an even key word for TinyJAMBU.
  *
  * \param ptr Points to the 4 bytes of the key word in little-endian order.
  * \return The key word.
  */
+#define tinyjambu_key_load_even(ptr) (~(le_load_word32((ptr))))
+
 /**
- * \def tinyjambu_key_load_odd(ptr)
  * \brief Loads an odd key word for TinyJAMBU.
  *
  * \param ptr Points to the 4 bytes of the key word in little-endian order.
  * \return The key word.
  */
-#if defined(TINYJAMBU_BACKEND_WORD64)
-#define tinyjambu_key_load_even(ptr) \
-    ((tinyjambu_key_word_t)(~(le_load_word32((ptr)))))
-#define tinyjambu_key_load_odd(ptr) \
-    (((tinyjambu_key_word_t)(~(le_load_word32((ptr))))) << 32)
-#else
-#define tinyjambu_key_load_even(ptr) \
-    ((tinyjambu_key_word_t)(~(le_load_word32((ptr)))))
-#define tinyjambu_key_load_odd(ptr) \
-    ((tinyjambu_key_word_t)(~(le_load_word32((ptr)))))
-#endif
+#define tinyjambu_key_load_odd(ptr) (~(le_load_word32((ptr))))
 
 /**
- * \def tinyjambu_init_state(state)
  * \brief Initializes a TinyJAMBU state to zero.
  *
  * \param state TinyJAMBU state to be initialized.
  */
+#define tinyjambu_init_state(state) \
+    ((state)->s[0] = (state)->s[1] = (state)->s[2] = (state)->s[3] = 0)
+
 /**
- * \def tinyjambu_add_domain(state, domain)
  * \brief Adds a domain separation value to the TinyJAMBU state.
  *
  * \param state TinyJAMBU state to be updated.
  * \param domain Domain separation value to add.
  */
+#define tinyjambu_add_domain(state, domain) \
+    ((state)->s[1] ^= (domain))
+
 /**
- * \def tinyjambu_absorb(state, word)
  * \brief Absorbs a 32-bit word into the TinyJAMBU state.
  *
  * \param state TinyJAMBU state to be updated.
  * \param word Word value to absorb.
  */
+#define tinyjambu_absorb(state, word) \
+    ((state)->s[3] ^= (word))
+
 /**
- * \def tinyjambu_squeeze(state)
  * \brief Squeezes a 32-bit word from the TinyJAMBU state.
  *
  * \param state TinyJAMBU state to squeeze from.
  * \return Word value that was squeezed out.
  */
-#if defined(TINYJAMBU_BACKEND_WORD64)
-#define tinyjambu_init_state(state) \
-    ((state)->t[0] = (state)->t[1] = 0)
-#define tinyjambu_add_domain(state, domain) \
-    ((state)->t[0] ^= ((uint64_t)(domain)) << 32)
-#define tinyjambu_absorb(state, word) \
-    ((state)->t[1] ^= ((uint64_t)(word)) << 32)
-#define tinyjambu_squeeze(state) ((uint32_t)((state)->t[1]))
-#else
-#define tinyjambu_init_state(state) \
-    ((state)->s[0] = (state)->s[1] = (state)->s[2] = (state)->s[3] = 0)
-#define tinyjambu_add_domain(state, domain) \
-    ((state)->s[1] ^= (domain))
-#define tinyjambu_absorb(state, word) \
-    ((state)->s[3] ^= (word))
 #define tinyjambu_squeeze(state) ((state)->s[2])
-#endif
 
 /**
  * \brief Converts a number of steps into a number of rounds, where each
@@ -216,20 +164,6 @@ void tinyjambu_permutation_256(tinyjambu_256_state_t *state, unsigned rounds);
         t3 = (s2 >> 21) | (s3 << 11); \
         t4 = (s2 >> 27) | (s3 << 5); \
         s0 ^= t1 ^ (t2 & t3) ^ t4 ^ kword; \
-    } while (0)
-
-/* Perform 64 steps of the TinyJAMBU permutation on 64-bit platforms */
-#define tinyjambu_steps_64(s0, s2, kword0, kword1) \
-    do { \
-        t1 = (s0 >> 47) | (s2 << 17); \
-        t2 = (s2 >> 6); \
-        t3 = (s2 >> 21); \
-        t4 = (s2 >> 27); \
-        s0 ^= t1 ^ (uint32_t)((t2 & t3) ^ t4 ^ kword0); \
-        t2 |= (s0 << 58); \
-        t3 |= (s0 << 43); \
-        t4 |= (s0 << 37); \
-        s0 ^= ((t2 & t3) ^ t4 ^ kword1) & 0xFFFFFFFF00000000ULL; \
     } while (0)
 
 #ifdef __cplusplus

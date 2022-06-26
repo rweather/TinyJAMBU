@@ -9,7 +9,6 @@ project(TinyJAMBU VERSION 0.1.0 LANGUAGES C ASM)
 # Options to force the use of specific backends for testing.
 # Use "cmake -DBACKEND_X=ON" to enable the specific backend.
 option(BACKEND_C32 "Force the use of the c32 backend" OFF)
-option(BACKEND_C64 "Force the use of the c64 backend" OFF)
 
 # Other options.
 option(COVERAGE "Enable the use of gcov for coverage testing" OFF)
@@ -31,9 +30,6 @@ set(CMAKE_C_FLAGS_DEBUG "-g")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
 if(BACKEND_C32)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DTINYJAMBU_FORCE_C32")
-endif()
-if(BACKEND_C64)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DTINYJAMBU_FORCE_C64")
 endif()
 if(COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
