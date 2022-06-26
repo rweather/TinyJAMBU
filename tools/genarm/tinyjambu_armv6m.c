@@ -22,10 +22,7 @@
 
 /*
  * This program is used to generate the assembly code version of the
- * TinyJAMBU permutation for ARM v7m microprocessors.
- *
- * This program can also be used to generate ARMv6 code when the
- * define FORCE_ARM_MODE is supplied on the compiler command-line.
+ * TinyJAMBU permutation for ARM v6m microprocessors.
  */
 
 #include <stdio.h>
@@ -37,13 +34,8 @@ static void function_header(const char *name)
 {
     printf("\n\t.align\t2\n");
     printf("\t.global\t%s\n", name);
-#if defined(FORCE_ARM_MODE)
-    printf("\t.arch\tarmv6\n");
-    printf("\t.arm\n");
-#else
     printf("\t.thumb\n");
     printf("\t.thumb_func\n");
-#endif
     printf("\t.type\t%s, %%function\n", name);
     printf("%s:\n", name);
 }
@@ -60,18 +52,11 @@ typedef struct
     const char *s1;
     const char *s2;
     const char *s3;
-    const char *k0;
-    const char *k1;
-    const char *k2;
-    const char *k3;
-    const char *k4;
-    const char *k5;
     const char *t0;
     const char *t1;
+    const char *t2;
 
 } reg_names;
-
-#if !defined(FORCE_ARM_MODE)
 
 static int is_low_reg(const char *reg)
 {
@@ -87,20 +72,34 @@ static void binop(const char *name, const char *reg1, const char *reg2)
         printf("\t%s\t%s, %s\n", name, reg1, reg2);
 }
 
-#else /* FORCE_ARM_MODE */
-
-/* Generates a binary operator, preferring thumb instructions if possible */
-static void binop(const char *name, const char *reg1, const char *reg2)
+/* Shift a value right */
+static void right(const char *dest, const char *src, int shift)
 {
-    printf("\t%s\t%s, %s, %s\n", name, reg1, reg1, reg2);
+    printf("\tlsrs\t%s, %s, #%d\n", dest, src, shift);
 }
 
-#endif /* FORCE_ARM_MODE */
+/* Shift a value left */
+static void left(const char *dest, const char *src, int shift)
+{
+    printf("\tlsls\t%s, %s, #%d\n", dest, src, shift);
+}
+
+/* Save r1 so that it can be used as an extra temporary */
+static void save_r1(void)
+{
+    printf("\tmov\tip, r1\n");
+}
+
+/* Restore the value of r1 */
+static void restore_r1(void)
+{
+    printf("\tmov\tr1, ip\n");
+}
 
 /* Perform 32 steps of the TinyJAMBU permutation */
 static void tinyjambu_steps_32
     (const reg_names *regs, const char *s0, const char *s1,
-     const char *s2, const char *s3, const char *kreg, int offset)
+     const char *s2, const char *s3, int offset)
 {
     /*
      * t1 = (s1 >> 15) | (s2 << 17);
@@ -110,29 +109,36 @@ static void tinyjambu_steps_32
      * s0 ^= t1 ^ (~(t2 & t3)) ^ t4 ^ kreg;
      */
 
-    /* s0 ^= t1 ^ t4 */
-    printf("\teor\t%s, %s, %s, lsr #15\n", s0, s0, s1);
-    printf("\teor\t%s, %s, %s, lsl #17\n", s0, s0, s2);
-    printf("\teor\t%s, %s, %s, lsr #27\n", s0, s0, s2);
-    printf("\teor\t%s, %s, %s, lsl #5\n",  s0, s0, s3);
+    /* s0 ^= (s1 >> 15) | (s2 << 17); */
+    right(regs->t0, s1, 15);
+    left(regs->t1, s2, 17);
+    binop("eor", s0, regs->t0);
+    binop("eor", s0, regs->t1);
 
-    /* s0 ^= ~(t2 & t3) */
+    /* s0 ^= (s2 >> 27) | (s3 << 5); */
+    right(regs->t0, s2, 27);
+    left(regs->t1, s3, 5);
+    binop("eor", s0, regs->t0);
+    binop("eor", s0, regs->t1);
+
+    /* t2 = (s2 >> 6) | (s3 << 26); */
+    right(regs->t0, s2, 6);
+    left(regs->t1, s3, 26);
+    binop("eor", regs->t0, regs->t1);
+
+    /* t3 = (s2 >> 21) | (s3 << 11); */
+    right(regs->t1, s2, 21);
+    left(regs->t2, s3, 11);
+    binop("eor", regs->t1, regs->t2);
+
+    /* s0 ^= ~(t2 & t3); */
     /* Note: We assume that the key is inverted so we can avoid the NOT */
-    printf("\tlsr\t%s, %s, #6\n", regs->t0, s2);
-    printf("\tlsr\t%s, %s, #21\n", regs->t1, s2);
-    printf("\teor\t%s, %s, %s, lsl #26\n", regs->t0, regs->t0, s3);
-    printf("\teor\t%s, %s, %s, lsl #11\n", regs->t1, regs->t1, s3);
     binop("and", regs->t0, regs->t1);
-    /*binop("mvn", regs->t0, regs->t0); -- avoided */
     binop("eor", s0, regs->t0);
 
-    /* XOR the key word from a register or memory offset */
-    if (kreg) {
-        binop("eor", s0, kreg);
-    } else {
-        printf("\tldr\t%s, [r0, #%d]\n", regs->t0, 16 + offset);
-        binop("eor", s0, regs->t0);
-    }
+    /* s0 ^= k[offset]; */
+    printf("\tldr\t%s, [r0, #%d]\n", regs->t0, 16 + offset);
+    binop("eor", s0, regs->t0);
 }
 
 /*
@@ -155,34 +161,27 @@ static void gen_tinyjambu_128(void)
     regs.s1 = "r3";
     regs.s2 = "r4";
     regs.s3 = "r5";
-    regs.k0 = "r6";
-    regs.k1 = "r7";
-    regs.k2 = "r8";
-    regs.k3 = "r9";
-    regs.k4 = 0;
-    regs.k5 = 0;
-    regs.t0 = "r10";
-    regs.t1 = "ip";
-    printf("\tpush\t{r4, r5, r6, r7, r8, r9, r10}\n");
+    regs.t0 = "r6";
+    regs.t1 = "r7";
+    regs.t2 = "r1";
+    printf("\tpush\t{r4, r5, r6, r7, lr}\n");
 
     /* Load all words of the state and the key into registers */
     printf("\tldr\t%s, [r0, #%d]\n", regs.s0, 0);
     printf("\tldr\t%s, [r0, #%d]\n", regs.s1, 4);
     printf("\tldr\t%s, [r0, #%d]\n", regs.s2, 8);
     printf("\tldr\t%s, [r0, #%d]\n", regs.s3, 12);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k0, 16);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k1, 20);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k2, 24);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k3, 28);
 
     /* Top of the round loop */
     printf(".L128:\n");
 
     /* Perform 128 steps for this round */
-    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, regs.k0, 0);
-    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, regs.k1, 4);
-    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, regs.k2, 8);
-    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, regs.k3, 12);
+    save_r1();
+    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, 0);
+    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, 4);
+    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, 8);
+    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, 12);
+    restore_r1();
 
     /* Bottom of the round loop */
     printf("\tsubs\tr1, r1, #1\n");
@@ -193,8 +192,7 @@ static void gen_tinyjambu_128(void)
     printf("\tstr\t%s, [r0, #%d]\n", regs.s1, 4);
     printf("\tstr\t%s, [r0, #%d]\n", regs.s2, 8);
     printf("\tstr\t%s, [r0, #%d]\n", regs.s3, 12);
-    printf("\tpop\t{r4, r5, r6, r7, r8, r9, r10}\n");
-    printf("\tbx\tlr\n");
+    printf("\tpop\t{r4, r5, r6, r7, pc}\n");
 }
 
 /* Generate the body of the TinyJAMBU-192 permutation function */
@@ -205,48 +203,43 @@ static void gen_tinyjambu_192(void)
     regs.s1 = "r3";
     regs.s2 = "r4";
     regs.s3 = "r5";
-    regs.k0 = "r6";
-    regs.k1 = "r7";
-    regs.k2 = "r8";
-    regs.k3 = "r9";
-    regs.k4 = "r10";
-    regs.k5 = "fp";
-    regs.t0 = "lr";
-    regs.t1 = "ip";
-    printf("\tpush\t{r4, r5, r6, r7, r8, r9, r10, fp, lr}\n");
+    regs.t0 = "r6";
+    regs.t1 = "r7";
+    regs.t2 = "r1";
+    printf("\tpush\t{r4, r5, r6, r7, lr}\n");
 
     /* Load all words of the state and the key into registers */
     printf("\tldr\t%s, [r0, #%d]\n", regs.s0, 0);
     printf("\tldr\t%s, [r0, #%d]\n", regs.s1, 4);
     printf("\tldr\t%s, [r0, #%d]\n", regs.s2, 8);
     printf("\tldr\t%s, [r0, #%d]\n", regs.s3, 12);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k0, 16);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k1, 20);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k2, 24);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k3, 28);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k4, 32);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k5, 36);
 
     /* Top of the round loop */
     printf(".L1921:\n");
 
     /* Unroll the loop 3 times to help with key word alignment */
-    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, regs.k0, 0);
-    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, regs.k1, 4);
-    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, regs.k2, 8);
-    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, regs.k3, 12);
+    save_r1();
+    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, 0);
+    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, 4);
+    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, 8);
+    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, 12);
+    restore_r1();
     printf("\tsubs\tr1, r1, #1\n");
     printf("\tbeq\t.L1922\n");  /* Early exit if the rounds are done */
-    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, regs.k4, 16);
-    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, regs.k5, 20);
-    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, regs.k0, 0);
-    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, regs.k1, 4);
+    save_r1();
+    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, 16);
+    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, 20);
+    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, 0);
+    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, 4);
+    restore_r1();
     printf("\tsubs\tr1, r1, #1\n");
     printf("\tbeq\t.L1922\n");  /* Early exit if the rounds are done */
-    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, regs.k2, 8);
-    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, regs.k3, 12);
-    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, regs.k4, 16);
-    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, regs.k5, 20);
+    save_r1();
+    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, 8);
+    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, 12);
+    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, 16);
+    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, 20);
+    restore_r1();
 
     /* Bottom of the round loop */
     printf("\tsubs\tr1, r1, #1\n");
@@ -258,7 +251,7 @@ static void gen_tinyjambu_192(void)
     printf("\tstr\t%s, [r0, #%d]\n", regs.s1, 4);
     printf("\tstr\t%s, [r0, #%d]\n", regs.s2, 8);
     printf("\tstr\t%s, [r0, #%d]\n", regs.s3, 12);
-    printf("\tpop\t{r4, r5, r6, r7, r8, r9, r10, fp, pc}\n");
+    printf("\tpop\t{r4, r5, r6, r7, pc}\n");
 }
 
 /* Generate the body of the TinyJAMBU-256 permutation function */
@@ -269,15 +262,10 @@ static void gen_tinyjambu_256(void)
     regs.s1 = "r3";
     regs.s2 = "r4";
     regs.s3 = "r5";
-    regs.k0 = "r6";
-    regs.k1 = "r7";
-    regs.k2 = "r8";
-    regs.k3 = "r9";
-    regs.k4 = "r10";
-    regs.k5 = "fp";
-    regs.t0 = "lr";
-    regs.t1 = "ip";
-    printf("\tpush\t{r4, r5, r6, r7, r8, r9, r10, fp, lr}\n");
+    regs.t0 = "r6";
+    regs.t1 = "r7";
+    regs.t2 = "r1";
+    printf("\tpush\t{r4, r5, r6, r7, lr}\n");
 
     /* Load all words of the state and most of the key into registers.
      * The last 3 key words need to be loaded on demand. */
@@ -285,27 +273,25 @@ static void gen_tinyjambu_256(void)
     printf("\tldr\t%s, [r0, #%d]\n", regs.s1, 4);
     printf("\tldr\t%s, [r0, #%d]\n", regs.s2, 8);
     printf("\tldr\t%s, [r0, #%d]\n", regs.s3, 12);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k0, 16);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k1, 20);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k2, 24);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k3, 28);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k4, 32);
-    printf("\tldr\t%s, [r0, #%d]\n", regs.k5, 36);
 
     /* Top of the round loop */
     printf(".L2561:\n");
 
     /* Unroll the loop 2 times to help with key word alignment */
-    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, regs.k0, 0);
-    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, regs.k1, 4);
-    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, regs.k2, 8);
-    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, regs.k3, 12);
+    save_r1();
+    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, 0);
+    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, 4);
+    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, 8);
+    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, 12);
+    restore_r1();
     printf("\tsubs\tr1, r1, #1\n");
     printf("\tbeq\t.L2562\n");  /* Early exit if the rounds are done */
-    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, regs.k4, 16);
-    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, regs.k5, 20);
-    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, 0, 24);
-    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, 0, 28);
+    save_r1();
+    tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, 16);
+    tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, 20);
+    tinyjambu_steps_32(&regs, regs.s2, regs.s3, regs.s0, regs.s1, 24);
+    tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, 28);
+    restore_r1();
 
     /* Bottom of the round loop */
     printf("\tsubs\tr1, r1, #1\n");
@@ -317,7 +303,7 @@ static void gen_tinyjambu_256(void)
     printf("\tstr\t%s, [r0, #%d]\n", regs.s1, 4);
     printf("\tstr\t%s, [r0, #%d]\n", regs.s2, 8);
     printf("\tstr\t%s, [r0, #%d]\n", regs.s3, 12);
-    printf("\tpop\t{r4, r5, r6, r7, r8, r9, r10, fp, pc}\n");
+    printf("\tpop\t{r4, r5, r6, r7, pc}\n");
 }
 
 int main(int argc, char *argv[])
@@ -329,18 +315,10 @@ int main(int argc, char *argv[])
 
     /* Output the file header */
     printf("#include \"tinyjambu-backend-select.h\"\n");
-#if defined(FORCE_ARM_MODE)
-    printf("#if defined(TINYJAMBU_BACKEND_ARMV6)\n");
-#else
-    printf("#if defined(TINYJAMBU_BACKEND_ARMV7M)\n");
-#endif
+    printf("#if defined(TINYJAMBU_BACKEND_ARMV6M)\n");
     fputs(copyright_message, stdout);
     printf("\t.syntax unified\n");
-#if defined(FORCE_ARM_MODE)
-    printf("\t.arch\tarmv6\n");
-#else
     printf("\t.thumb\n");
-#endif
     printf("\t.text\n");
 
     /* Output the TinyJAMBU-128 permutation function */

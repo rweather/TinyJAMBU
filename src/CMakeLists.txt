@@ -3,14 +3,23 @@ list(APPEND TINYJAMBU_SOURCES
     TinyJAMBU.h
     tinyjambu-128-aead.c
     tinyjambu-128-asm-avr5.S
+    tinyjambu-128-asm-armv6.S
+    tinyjambu-128-asm-armv6m.S
+    tinyjambu-128-asm-armv7m.S
     tinyjambu-128-c32.c
     tinyjambu-128-c64.c
     tinyjambu-192-aead.c
     tinyjambu-192-asm-avr5.S
+    tinyjambu-192-asm-armv6.S
+    tinyjambu-192-asm-armv6m.S
+    tinyjambu-192-asm-armv7m.S
     tinyjambu-192-c32.c
     tinyjambu-192-c64.c
     tinyjambu-256-aead.c
     tinyjambu-256-asm-avr5.S
+    tinyjambu-256-asm-armv6.S
+    tinyjambu-256-asm-armv6m.S
+    tinyjambu-256-asm-armv7m.S
     tinyjambu-256-c32.c
     tinyjambu-256-c64.c
     tinyjambu-backend.h

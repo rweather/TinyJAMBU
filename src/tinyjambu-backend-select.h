@@ -67,6 +67,20 @@ extern "C" {
 #define TINYJAMBU_BACKEND_ARMV7M 1
 #define TINYJAMBU_BACKEND_WORD32 1
 
+#elif defined(__ARM_ARCH_ISA_THUMB) && __ARM_ARCH == 6 && defined(__ARM_ARCH_6M__)
+
+/* Assembly backend for ARMv6-M systems; e.g. ARM Cortex M0+ */
+#define TINYJAMBU_BACKEND_ARMV6M 1
+#define TINYJAMBU_BACKEND_WORD32 1
+
+#elif defined(__ARM_ARCH) && __ARM_ARCH == 6
+
+/* Assembly backend for ARMv6 systems, should work with thumb and non-thumb */
+#define TINYJAMBU_BACKEND_ARMV6 1
+#define TINYJAMBU_BACKEND_WORD32 1
+
+/* Assembly backend for ARMv6 systems, should work with thumb and non-thumb */
+
 #elif defined(__x86_64) || defined(__x86_64__) || \
       defined(__aarch64__) || defined(__ARM_ARCH_ISA_A64) || \
       defined(_M_AMD64) || defined(_M_X64) || defined(_M_IA64) || \
