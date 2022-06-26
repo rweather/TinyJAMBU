@@ -1,0 +1,20 @@
+{
+    "name": "TinyJAMBU",
+    "version": "0.1.0",
+    "keywords": "TinyJAMBU",
+    "description": "Suite of cryptographic primitives built around the TinyJAMBU permutation",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/rweather/TinyJAMBU.git"
+    },
+    "authors":
+    [
+        {
+            "name": "Rhys Weatherley",
+            "email": "rhys.weatherley@gmail.com"
+        }
+    ],
+    "frameworks": "arduino",
+    "platforms": "*"
+}
