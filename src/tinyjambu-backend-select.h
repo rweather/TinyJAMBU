@@ -53,6 +53,20 @@ extern "C" {
 #define TINYJAMBU_BACKEND_AVR5 1
 #define TINYJAMBU_BACKEND_WORD32 1
 
+#elif defined(__ARM_ARCH_ISA_THUMB) && __ARM_ARCH == 8 && defined(__ARM_ARCH_8M__)
+
+/* Assembly backend for ARMv8-M systems; e.g. ARM Cortex M33 */
+/* This can actually use the same backend as ARMv7-M systems */
+#define TINYJAMBU_BACKEND_ARMV7M 1
+#define TINYJAMBU_BACKEND_WORD32 1
+
+#elif defined(__ARM_ARCH_ISA_THUMB) && __ARM_ARCH == 7
+
+/* Assembly backend for ARMv7-M systems; e.g. ARM Cortex M3, M4, and M7 */
+/* This backend has also been tested to work on ARMv7-A systems */
+#define TINYJAMBU_BACKEND_ARMV7M 1
+#define TINYJAMBU_BACKEND_WORD32 1
+
 #elif defined(__x86_64) || defined(__x86_64__) || \
       defined(__aarch64__) || defined(__ARM_ARCH_ISA_A64) || \
       defined(_M_AMD64) || defined(_M_X64) || defined(_M_IA64) || \
