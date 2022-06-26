@@ -36,18 +36,6 @@ extern "C" {
 #endif
 
 /**
- * \brief TinyJAMBU permutation state.
- */
-typedef struct
-{
-#if defined(TINYJAMBU_BACKEND_WORD64)
-    uint64_t t[2];      /**< State as 64-bit words */
-#else
-    uint32_t s[4];      /**< State as 32-bit words */
-#endif
-} tinyjambu_state_t;
-
-/**
  * \typedef tinyjambu_key_word_t
  * \brief Size of a word in the key schedule (32 or 64 bits).
  */
@@ -56,6 +44,57 @@ typedef uint64_t tinyjambu_key_word_t;
 #else
 typedef uint32_t tinyjambu_key_word_t;
 #endif
+
+/**
+ * \brief TinyJAMBU permutation state.
+ */
+typedef struct
+{
+    union {
+        uint64_t t[2];      /**< State as 64-bit words */
+        uint32_t s[4];      /**< State as 32-bit words */
+    };
+
+} tinyjambu_state_t;
+
+/**
+ * \brief TinyJAMBU-128 permutation state.
+ */
+typedef struct
+{
+    union {
+        uint64_t t[2];          /**< State as 64-bit words */
+        uint32_t s[4];          /**< State as 32-bit words */
+    };
+    tinyjambu_key_word_t k[4];  /**< Words of the key, pre-inverted */
+
+} tinyjambu_128_state_t;
+
+/**
+ * \brief TinyJAMBU-192 permutation state.
+ */
+typedef struct
+{
+    union {
+        uint64_t t[2];          /**< State as 64-bit words */
+        uint32_t s[4];          /**< State as 32-bit words */
+    };
+    tinyjambu_key_word_t k[6];  /**< Words of the key, pre-inverted */
+
+} tinyjambu_192_state_t;
+
+/**
+ * \brief TinyJAMBU-256 permutation state.
+ */
+typedef struct
+{
+    union {
+        uint64_t t[2];          /**< State as 64-bit words */
+        uint32_t s[4];          /**< State as 32-bit words */
+    };
+    tinyjambu_key_word_t k[8];  /**< Words of the key, pre-inverted */
+
+} tinyjambu_256_state_t;
 
 /**
  * \def tinyjambu_key_load_even(ptr)
@@ -141,32 +180,18 @@ typedef uint32_t tinyjambu_key_word_t;
 /**
  * \brief Perform the TinyJAMBU-128 permutation.
  *
- * \param state TinyJAMBU-128 state to be permuted.
- * \param key Points to the 4 key words.
+ * \param state TinyJAMBU-128 state to be permuted, including the key.
  * \param rounds The number of rounds to perform.
- *
- * \note The words of the \a key must be the inverted version of the
- * actual key so that we can replace NAND with AND operations when
- * evaluating the permutation.
  */
-void tinyjambu_permutation_128
-    (tinyjambu_state_t *state, const tinyjambu_key_word_t *key,
-     unsigned rounds);
+void tinyjambu_permutation_128(tinyjambu_128_state_t *state, unsigned rounds);
 
 /**
  * \brief Perform the TinyJAMBU-192 permutation.
  *
- * \param state TinyJAMBU-192 state to be permuted.
- * \param key Points to the 6 key words.
+ * \param state TinyJAMBU-192 state to be permuted, including the key.
  * \param rounds The number of rounds to perform.
- *
- * \note The words of the \a key must be the inverted version of the
- * actual key so that we can replace NAND with AND operations when
- * evaluating the permutation.
  */
-void tinyjambu_permutation_192
-    (tinyjambu_state_t *state, const tinyjambu_key_word_t *key,
-     unsigned rounds);
+void tinyjambu_permutation_192(tinyjambu_192_state_t *state, unsigned rounds);
 
 /**
  * \brief Perform the TinyJAMBU-256 permutation.
@@ -179,9 +204,7 @@ void tinyjambu_permutation_192
  * actual key so that we can replace NAND with AND operations when
  * evaluating the permutation.
  */
-void tinyjambu_permutation_256
-    (tinyjambu_state_t *state, const tinyjambu_key_word_t *key,
-     unsigned rounds);
+void tinyjambu_permutation_256(tinyjambu_256_state_t *state, unsigned rounds);
 
 /* Note: The last line should contain ~(t2 & t3) according to the
  * specification but we can avoid the NOT by inverting the words

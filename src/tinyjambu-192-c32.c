@@ -25,9 +25,7 @@
 
 #if defined(TINYJAMBU_BACKEND_C32)
 
-void tinyjambu_permutation_192
-    (tinyjambu_state_t *state, const tinyjambu_key_word_t *key,
-     unsigned rounds)
+void tinyjambu_permutation_192(tinyjambu_192_state_t *state, unsigned rounds)
 {
     uint32_t t1, t2, t3, t4;
 
@@ -40,30 +38,30 @@ void tinyjambu_permutation_192
     /* Perform all permutation rounds 128 at a time */
     for (; rounds > 0; --rounds) {
         /* Perform the first set of 128 steps */
-        tinyjambu_steps_32(s0, s1, s2, s3, key[0]);
-        tinyjambu_steps_32(s1, s2, s3, s0, key[1]);
-        tinyjambu_steps_32(s2, s3, s0, s1, key[2]);
-        tinyjambu_steps_32(s3, s0, s1, s2, key[3]);
+        tinyjambu_steps_32(s0, s1, s2, s3, state->k[0]);
+        tinyjambu_steps_32(s1, s2, s3, s0, state->k[1]);
+        tinyjambu_steps_32(s2, s3, s0, s1, state->k[2]);
+        tinyjambu_steps_32(s3, s0, s1, s2, state->k[3]);
 
         /* Bail out if this is the last round */
         if ((--rounds) == 0)
             break;
 
         /* Perform the second set of 128 steps */
-        tinyjambu_steps_32(s0, s1, s2, s3, key[4]);
-        tinyjambu_steps_32(s1, s2, s3, s0, key[5]);
-        tinyjambu_steps_32(s2, s3, s0, s1, key[0]);
-        tinyjambu_steps_32(s3, s0, s1, s2, key[1]);
+        tinyjambu_steps_32(s0, s1, s2, s3, state->k[4]);
+        tinyjambu_steps_32(s1, s2, s3, s0, state->k[5]);
+        tinyjambu_steps_32(s2, s3, s0, s1, state->k[0]);
+        tinyjambu_steps_32(s3, s0, s1, s2, state->k[1]);
 
         /* Bail out if this is the last round */
         if ((--rounds) == 0)
             break;
 
         /* Perform the third set of 128 steps */
-        tinyjambu_steps_32(s0, s1, s2, s3, key[2]);
-        tinyjambu_steps_32(s1, s2, s3, s0, key[3]);
-        tinyjambu_steps_32(s2, s3, s0, s1, key[4]);
-        tinyjambu_steps_32(s3, s0, s1, s2, key[5]);
+        tinyjambu_steps_32(s0, s1, s2, s3, state->k[2]);
+        tinyjambu_steps_32(s1, s2, s3, s0, state->k[3]);
+        tinyjambu_steps_32(s2, s3, s0, s1, state->k[4]);
+        tinyjambu_steps_32(s3, s0, s1, s2, state->k[5]);
     }
 
     /* Store the local variables back to the state */

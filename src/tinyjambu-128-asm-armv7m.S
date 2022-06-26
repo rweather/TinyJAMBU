@@ -33,65 +33,65 @@
 	.type	tinyjambu_permutation_128, %function
 tinyjambu_permutation_128:
 	push	{r4, r5, r6, r7, r8, r9, r10}
-	ldr	r3, [r0, #0]
-	ldr	r4, [r0, #4]
-	ldr	r5, [r0, #8]
-	ldr	r6, [r0, #12]
-	ldr	r7, [r1, #0]
-	ldr	r8, [r1, #4]
-	ldr	r9, [r1, #8]
-	ldr	r10, [r1, #12]
+	ldr	r2, [r0, #0]
+	ldr	r3, [r0, #4]
+	ldr	r4, [r0, #8]
+	ldr	r5, [r0, #12]
+	ldr	r6, [r0, #16]
+	ldr	r7, [r0, #20]
+	ldr	r8, [r0, #24]
+	ldr	r9, [r0, #28]
 .L128:
+	eor	r2, r2, r3, lsr #15
+	eor	r2, r2, r4, lsl #17
+	eor	r2, r2, r4, lsr #27
+	eor	r2, r2, r5, lsl #5
+	lsr	r10, r4, #6
+	lsr	ip, r4, #21
+	eor	r10, r10, r5, lsl #26
+	eor	ip, ip, r5, lsl #11
+	and	r10, ip
+	eor	r2, r10
+	eors	r2, r6
 	eor	r3, r3, r4, lsr #15
 	eor	r3, r3, r5, lsl #17
 	eor	r3, r3, r5, lsr #27
-	eor	r3, r3, r6, lsl #5
-	lsr	r1, r5, #6
+	eor	r3, r3, r2, lsl #5
+	lsr	r10, r5, #6
 	lsr	ip, r5, #21
-	eor	r1, r1, r6, lsl #26
-	eor	ip, ip, r6, lsl #11
-	and	r1, ip
-	eors	r3, r1
+	eor	r10, r10, r2, lsl #26
+	eor	ip, ip, r2, lsl #11
+	and	r10, ip
+	eor	r3, r10
 	eors	r3, r7
 	eor	r4, r4, r5, lsr #15
-	eor	r4, r4, r6, lsl #17
-	eor	r4, r4, r6, lsr #27
+	eor	r4, r4, r2, lsl #17
+	eor	r4, r4, r2, lsr #27
 	eor	r4, r4, r3, lsl #5
-	lsr	r1, r6, #6
-	lsr	ip, r6, #21
-	eor	r1, r1, r3, lsl #26
+	lsr	r10, r2, #6
+	lsr	ip, r2, #21
+	eor	r10, r10, r3, lsl #26
 	eor	ip, ip, r3, lsl #11
-	and	r1, ip
-	eors	r4, r1
+	and	r10, ip
+	eor	r4, r10
 	eor	r4, r8
-	eor	r5, r5, r6, lsr #15
+	eor	r5, r5, r2, lsr #15
 	eor	r5, r5, r3, lsl #17
 	eor	r5, r5, r3, lsr #27
 	eor	r5, r5, r4, lsl #5
-	lsr	r1, r3, #6
+	lsr	r10, r3, #6
 	lsr	ip, r3, #21
-	eor	r1, r1, r4, lsl #26
+	eor	r10, r10, r4, lsl #26
 	eor	ip, ip, r4, lsl #11
-	and	r1, ip
-	eors	r5, r1
+	and	r10, ip
+	eor	r5, r10
 	eor	r5, r9
-	eor	r6, r6, r3, lsr #15
-	eor	r6, r6, r4, lsl #17
-	eor	r6, r6, r4, lsr #27
-	eor	r6, r6, r5, lsl #5
-	lsr	r1, r4, #6
-	lsr	ip, r4, #21
-	eor	r1, r1, r5, lsl #26
-	eor	ip, ip, r5, lsl #11
-	and	r1, ip
-	eors	r6, r1
-	eor	r6, r10
-	subs	r2, r2, #1
+	subs	r1, r1, #1
 	bne	.L128
-	str	r3, [r0, #0]
-	str	r4, [r0, #4]
-	str	r5, [r0, #8]
-	str	r6, [r0, #12]
+	str	r2, [r0, #0]
+	str	r3, [r0, #4]
+	str	r4, [r0, #8]
+	str	r5, [r0, #12]
 	pop	{r4, r5, r6, r7, r8, r9, r10}
 	bx	lr
 	.size	tinyjambu_permutation_128, .-tinyjambu_permutation_128

@@ -25,9 +25,7 @@
 
 #if defined(TINYJAMBU_BACKEND_C64)
 
-void tinyjambu_permutation_128
-    (tinyjambu_state_t *state, const tinyjambu_key_word_t *key,
-     unsigned rounds)
+void tinyjambu_permutation_128(tinyjambu_128_state_t *state, unsigned rounds)
 {
     uint64_t t1, t2, t3, t4;
 
@@ -38,16 +36,16 @@ void tinyjambu_permutation_128
     /* Perform all permutation rounds 128 at a time */
     for (; rounds > 0; --rounds) {
         /* Perform the first set of 128 steps */
-        tinyjambu_steps_64(s0, s2, key[0], key[1]);
-        tinyjambu_steps_64(s2, s0, key[2], key[3]);
+        tinyjambu_steps_64(s0, s2, state->k[0], state->k[1]);
+        tinyjambu_steps_64(s2, s0, state->k[2], state->k[3]);
 
         /* Bail out if this is the last round */
         if ((--rounds) == 0)
             break;
 
         /* Perform the second set of 128 steps */
-        tinyjambu_steps_64(s0, s2, key[0], key[1]);
-        tinyjambu_steps_64(s2, s0, key[2], key[3]);
+        tinyjambu_steps_64(s0, s2, state->k[0], state->k[1]);
+        tinyjambu_steps_64(s2, s0, state->k[2], state->k[3]);
     }
 
     /* Store the local variables back to the state */
