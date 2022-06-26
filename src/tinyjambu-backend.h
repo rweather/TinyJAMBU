@@ -24,6 +24,7 @@
 #define TINYJAMBU_BACKEND_H
 
 #include "tinyjambu-util.h"
+#include "tinyjambu-backend-select.h"
 
 /**
  * \file tinyjambu-backend.h
@@ -32,35 +33,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-/* Select the default back end to use for the TinyJAMBU permutation,
- * and any properties we can use to optimize use of the permutation. */
-
-#if defined(TINYJAMBU_FORCE_C32)
-
-/* Force the use of the "c32" backend for testing purposes */
-#define TINYJAMBU_BACKEND_C32 1
-#define TINYJAMBU_BACKEND_WORD32 1
-
-#elif defined(TINYJAMBU_FORCE_C64)
-
-/* Force the use of the "c64" backend for testing purposes */
-#define TINYJAMBU_BACKEND_C64 1
-#define TINYJAMBU_BACKEND_WORD64 1
-
-#elif defined(LW_UTIL_CPU_IS_64BIT)
-
-/* C backend for 64-bit systems */
-#define TINYJAMBU_BACKEND_C64 1
-#define TINYJAMBU_BACKEND_WORD64 1
-
-#else
-
-/* C backend for 32-bit systems */
-#define TINYJAMBU_BACKEND_C32 1
-#define TINYJAMBU_BACKEND_WORD32 1
-
 #endif
 
 /**
