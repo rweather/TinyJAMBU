@@ -16,8 +16,15 @@ The following implementations are provided:
 * `armv7m`: Assembly code for ARMv7-M platforms such as ARM Cortex M3,
 ARM Cortex M4, ARM Cortex M7.  Should also work on ARMv8-M platforms such as
 ARM Cortex M33.
+* `riscv32e`: 32-bit RISC-V systems, RV32E base integer instruction set.
+* `riscv32i`: 32-bit RISC-V systems, RV32I base integer instruction set.
+* `riscv64i`: 64-bit RISC-V systems, RV64I base integer instruction set.
 
 Platforms without an assembly version will use the plain C implementation.
+
+TinyJAMBU is inherently 32-bit in its design.  The assembly code backends
+for 64-bit systems restrict themselves to 32-bit register operations,
+but still provide an improvement over plain C.
 
 Building
 --------

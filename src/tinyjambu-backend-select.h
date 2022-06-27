@@ -67,6 +67,21 @@ extern "C" {
 /* Assembly backend for ARMv6 systems, should work with thumb and non-thumb */
 #define TINYJAMBU_BACKEND_ARMV6 1
 
+#elif defined(__riscv) && __riscv_xlen == 64
+
+/* Assembly backend for RISC-V systems, RV64I base integer instruction set */
+#define TINYJAMBU_BACKEND_RISCV64I 1
+
+#elif defined(__riscv) && __riscv_xlen == 32 && defined(__riscv_32e)
+
+/* Assembly backend for RISC-V systems, RV32E base integer instruction set */
+#define TINYJAMBU_BACKEND_RISCV32E 1
+
+#elif defined(__riscv) && __riscv_xlen == 32
+
+/* Assembly backend for RISC-V systems, RV32I base integer instruction set */
+#define TINYJAMBU_BACKEND_RISCV32I 1
+
 #else
 
 /* Plain C backend */
