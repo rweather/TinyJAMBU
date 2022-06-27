@@ -19,6 +19,7 @@ ARM Cortex M33.
 * `riscv32e`: 32-bit RISC-V systems, RV32E base integer instruction set.
 * `riscv32i`: 32-bit RISC-V systems, RV32I base integer instruction set.
 * `riscv64i`: 64-bit RISC-V systems, RV64I base integer instruction set.
+* `xtensa`: 32-bit Xtensa processors as used on ESP32 and ESP8266 modules.
 
 Platforms without an assembly version will use the plain C implementation.
 

@@ -9,6 +9,7 @@ list(APPEND TINYJAMBU_SOURCES
     tinyjambu-128-asm-riscv32e.S
     tinyjambu-128-asm-riscv32i.S
     tinyjambu-128-asm-riscv64i.S
+    tinyjambu-128-asm-xtensa.S
     tinyjambu-128-c32.c
     tinyjambu-192-aead.c
     tinyjambu-192-asm-avr5.S
@@ -18,6 +19,7 @@ list(APPEND TINYJAMBU_SOURCES
     tinyjambu-192-asm-riscv32e.S
     tinyjambu-192-asm-riscv32i.S
     tinyjambu-192-asm-riscv64i.S
+    tinyjambu-192-asm-xtensa.S
     tinyjambu-192-c32.c
     tinyjambu-256-aead.c
     tinyjambu-256-asm-avr5.S
@@ -27,6 +29,7 @@ list(APPEND TINYJAMBU_SOURCES
     tinyjambu-256-asm-riscv32e.S
     tinyjambu-256-asm-riscv32i.S
     tinyjambu-256-asm-riscv64i.S
+    tinyjambu-256-asm-xtensa.S
     tinyjambu-256-c32.c
     tinyjambu-backend.h
     tinyjambu-backend-select.h

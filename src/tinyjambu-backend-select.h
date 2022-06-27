@@ -82,6 +82,11 @@ extern "C" {
 /* Assembly backend for RISC-V systems, RV32I base integer instruction set */
 #define TINYJAMBU_BACKEND_RISCV32I 1
 
+#elif defined(__XTENSA__)
+
+/* Assembly backend for Xtensa-based systems */
+#define TINYJAMBU_BACKEND_XTENSA 1
+
 #else
 
 /* Plain C backend */
