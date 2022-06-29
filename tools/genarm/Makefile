@@ -31,12 +31,12 @@ clean:
 check:
 
 generate: all
-	bin/tinyjambu_armv6 128 >../../src/tinyjambu-128-asm-armv6.S
-	bin/tinyjambu_armv6 192 >../../src/tinyjambu-192-asm-armv6.S
-	bin/tinyjambu_armv6 256 >../../src/tinyjambu-256-asm-armv6.S
-	bin/tinyjambu_armv6m 128 >../../src/tinyjambu-128-asm-armv6m.S
-	bin/tinyjambu_armv6m 192 >../../src/tinyjambu-192-asm-armv6m.S
-	bin/tinyjambu_armv6m 256 >../../src/tinyjambu-256-asm-armv6m.S
-	bin/tinyjambu_armv7m 128 >../../src/tinyjambu-128-asm-armv7m.S
-	bin/tinyjambu_armv7m 192 >../../src/tinyjambu-192-asm-armv7m.S
-	bin/tinyjambu_armv7m 256 >../../src/tinyjambu-256-asm-armv7m.S
+	bin/tinyjambu_armv6 128 >../../src/backend/tinyjambu-128-asm-armv6.S
+	bin/tinyjambu_armv6 192 >../../src/backend/tinyjambu-192-asm-armv6.S
+	bin/tinyjambu_armv6 256 >../../src/backend/tinyjambu-256-asm-armv6.S
+	bin/tinyjambu_armv6m 128 >../../src/backend/tinyjambu-128-asm-armv6m.S
+	bin/tinyjambu_armv6m 192 >../../src/backend/tinyjambu-192-asm-armv6m.S
+	bin/tinyjambu_armv6m 256 >../../src/backend/tinyjambu-256-asm-armv6m.S
+	bin/tinyjambu_armv7m 128 >../../src/backend/tinyjambu-128-asm-armv7m.S
+	bin/tinyjambu_armv7m 192 >../../src/backend/tinyjambu-192-asm-armv7m.S
+	bin/tinyjambu_armv7m 256 >../../src/backend/tinyjambu-256-asm-armv7m.S

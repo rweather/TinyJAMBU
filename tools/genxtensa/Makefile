@@ -21,6 +21,6 @@ clean:
 check:
 
 generate: all
-	bin/tinyjambu_xtensa 128 >../../src/tinyjambu-128-asm-xtensa.S
-	bin/tinyjambu_xtensa 192 >../../src/tinyjambu-192-asm-xtensa.S
-	bin/tinyjambu_xtensa 256 >../../src/tinyjambu-256-asm-xtensa.S
+	bin/tinyjambu_xtensa 128 >../../src/backend/tinyjambu-128-asm-xtensa.S
+	bin/tinyjambu_xtensa 192 >../../src/backend/tinyjambu-192-asm-xtensa.S
+	bin/tinyjambu_xtensa 256 >../../src/backend/tinyjambu-256-asm-xtensa.S
