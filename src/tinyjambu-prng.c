@@ -129,7 +129,7 @@ void tinyjambu_prng_init
     /* Generate a random key using the system random number source */
     if (callback) {
         (*callback)(user_data, (unsigned char *)(pstate->state.k),
-                    sizeof(pstate->state.k), 0);
+                    sizeof(pstate->state.k));
     }
 
     /* Set up the TinyJAMBU state using the initial key and nonce */
@@ -211,7 +211,7 @@ void tinyjambu_prng_reseed(tinyjambu_prng_state_t *state)
 
     /* Acquire new entropy using the system random number source */
     if (pstate->callback)
-        (*pstate->callback)(pstate->user_data, data, sizeof(data), 1);
+        (*pstate->callback)(pstate->user_data, data, sizeof(data));
 
     /* Feed the new entropy into the PRNG */
     tinyjambu_prng_feed(state, data, sizeof(data));

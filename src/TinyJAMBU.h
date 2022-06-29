@@ -404,18 +404,17 @@ typedef struct
  * \param user_data User-supplied data pointer from tinyjambu_prng_init().
  * \param buf Points to the buffer to fill with random data.
  * \param size Number of bytes that are requested.
- * \param reseed 1 if this is a reseed operation, 0 for the initial
- * fetch of system rsandomness.
  *
- * \return The number of bytes that were returned.
+ * \return The number of bytes that were returned, or zero if the
+ * system random number source has failed.
  *
  * The callback should consult the system random number source
  * to obtain \a size bytes of new entropy.  It is allowed to return
  * less than \a size bytes but the callback should try very hard to
- * retrieve all requested bytes.  Especially if \a reseed is 0.
+ * retrieve all requested bytes.
  */
 typedef size_t (*tinyjambu_prng_callback_t)
-    (void *user_data, unsigned char *buf, size_t size, int reseed);
+    (void *user_data, unsigned char *buf, size_t size);
 
 /**
  * \brief Initializes a TinyJAMBU-based PRNG.

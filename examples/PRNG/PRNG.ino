@@ -81,10 +81,9 @@ static uint32_t get_random_word()
 
 // Callback from the PRNG to get random entropy from the system.
 static size_t get_system_random
-    (void *user_data, unsigned char *buf, size_t size, int reseed)
+    (void *user_data, unsigned char *buf, size_t size)
 {
     (void)user_data;
-    (void)reseed;
     size_t temp = size;
     while (temp > 0) {
         uint32_t x = get_random_word();
