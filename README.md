@@ -76,7 +76,8 @@ Extensions
 This library provides the following extensions beyond the AEAD mode from
 the TinyJAMBU submission to the NIST Lightweight Cryptography Competition:
 
-* Synthetic Initialization Vector (SIV) Mode.
+* Synthetic Initialization Vector (SIV) Mode
+* Pseudorandom Number Generator (PRNG)
 
 ### SIV Mode
 
@@ -109,6 +110,20 @@ page or block.  Without the tag it is impossible to decrypt the message.
 
 See the `README.md` file in the `tools/sivref` directory for a formal
 description of the SIV mode together with reference code.
+
+### Pseudorandom Number Generator
+
+This library provides an API for expanding entropy from a system random
+number source into an arbitrary amount of random data.  If the source
+has non-uniform entropy distribution, then the PRNG will hash the
+input to make the output more uniform.
+
+The PRNG uses a variation on the TinyJAMBU-256 AEAD mode.  The application
+must supply a function to fetch data from the system random number source
+and then the PRNG API takes care of the rest.
+
+The Arudino PRNG example demonstrates how to use the API to generate
+random data at runtime.
 
 History
 -------

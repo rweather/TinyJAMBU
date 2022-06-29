@@ -36,6 +36,8 @@ list(APPEND TINYJAMBU_SOURCES
     tinyjambu-256-siv.c
     tinyjambu-backend.h
     tinyjambu-backend-select.h
+    tinyjambu-clean.c
+    tinyjambu-prng.c
     tinyjambu-util.c
     tinyjambu-util.h
 )

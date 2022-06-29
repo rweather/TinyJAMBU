@@ -43,8 +43,14 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 set(ASM_OPTIONS "-x assembler-with-cpp")
 set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} ${ASM_OPTIONS}")
 
-# Set up the main include directory.
-include_directories(src)
+# Check for some system features.
+check_include_files(strings.h HAVE_STRINGS_H)
+check_function_exists(explicit_bzero HAVE_EXPLICIT_BZERO)
+check_function_exists(memset_s HAVE_MEMSET_S)
+configure_file(config.h.in config.h)
+
+# Set up the main include directories.
+include_directories(src ${PROJECT_BINARY_DIR})
 
 # Add the subdirectories.
 add_subdirectory(src)
