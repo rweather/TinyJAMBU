@@ -58,11 +58,47 @@ aead_cipher_t const tinyjambu256_cipher = {
     0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+aead_cipher_t const tinyjambu128_siv_cipher = {
+    "TinyJAMBU-128-SIV",
+    TINYJAMBU_128_KEY_SIZE,
+    TINYJAMBU_NONCE_SIZE,
+    TINYJAMBU_TAG_SIZE,
+    AEAD_FLAG_LITTLE_ENDIAN,
+    tinyjambu_128_siv_encrypt,
+    tinyjambu_128_siv_decrypt,
+    0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+aead_cipher_t const tinyjambu192_siv_cipher = {
+    "TinyJAMBU-192-SIV",
+    TINYJAMBU_192_KEY_SIZE,
+    TINYJAMBU_NONCE_SIZE,
+    TINYJAMBU_TAG_SIZE,
+    AEAD_FLAG_LITTLE_ENDIAN,
+    tinyjambu_192_siv_encrypt,
+    tinyjambu_192_siv_decrypt,
+    0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+aead_cipher_t const tinyjambu256_siv_cipher = {
+    "TinyJAMBU-256-SIV",
+    TINYJAMBU_256_KEY_SIZE,
+    TINYJAMBU_NONCE_SIZE,
+    TINYJAMBU_TAG_SIZE,
+    AEAD_FLAG_LITTLE_ENDIAN,
+    tinyjambu_256_siv_encrypt,
+    tinyjambu_256_siv_decrypt,
+    0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
 /* List of all AEAD ciphers that we can run KAT tests for */
 static const aead_cipher_t *const ciphers[] = {
     &tinyjambu128_cipher,
     &tinyjambu192_cipher,
     &tinyjambu256_cipher,
+    &tinyjambu128_siv_cipher,
+    &tinyjambu192_siv_cipher,
+    &tinyjambu256_siv_cipher,
     0
 };
 

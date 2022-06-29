@@ -227,6 +227,162 @@ int tinyjambu_256_aead_decrypt
      const unsigned char *npub,
      const unsigned char *k);
 
+/**
+ * \brief Encrypts and authenticates a packet with TinyJAMBU-128 in SIV mode.
+ *
+ * \param c Buffer to receive the output.
+ * \param clen On exit, set to the length of the output which includes
+ * the ciphertext and the 8 byte authentication tag.
+ * \param m Buffer that contains the plaintext message to encrypt.
+ * \param mlen Length of the plaintext message in bytes.
+ * \param ad Buffer that contains associated data to authenticate
+ * along with the packet but which does not need to be encrypted.
+ * \param adlen Length of the associated data in bytes.
+ * \param npub Points to the public nonce for the packet which must
+ * be 12 bytes in length.
+ * \param k Points to the 16 bytes of the key to use to encrypt the packet.
+ *
+ * \sa tinyjambu_128_siv_decrypt()
+ */
+void tinyjambu_128_siv_encrypt
+    (unsigned char *c, size_t *clen,
+     const unsigned char *m, size_t mlen,
+     const unsigned char *ad, size_t adlen,
+     const unsigned char *npub,
+     const unsigned char *k);
+
+/**
+ * \brief Decrypts and authenticates a packet with TinyJAMBU-128 in SIV mode.
+ *
+ * \param m Buffer to receive the plaintext message on output.
+ * \param mlen Receives the length of the plaintext message on output.
+ * \param c Buffer that contains the ciphertext and authentication
+ * tag to decrypt.
+ * \param clen Length of the input data in bytes, which includes the
+ * ciphertext and the 8 byte authentication tag.
+ * \param ad Buffer that contains associated data to authenticate
+ * along with the packet but which does not need to be encrypted.
+ * \param adlen Length of the associated data in bytes.
+ * \param npub Points to the public nonce for the packet which must
+ * be 12 bytes in length.
+ * \param k Points to the 16 bytes of the key to use to decrypt the packet.
+ *
+ * \return 0 on success, -1 if the authentication tag was incorrect,
+ * or some other negative number if there was an error in the parameters.
+ *
+ * \sa tinyjambu_128_siv_encrypt()
+ */
+int tinyjambu_128_siv_decrypt
+    (unsigned char *m, size_t *mlen,
+     const unsigned char *c, size_t clen,
+     const unsigned char *ad, size_t adlen,
+     const unsigned char *npub,
+     const unsigned char *k);
+
+/**
+ * \brief Encrypts and authenticates a packet with TinyJAMBU-192 in SIV mode.
+ *
+ * \param c Buffer to receive the output.
+ * \param clen On exit, set to the length of the output which includes
+ * the ciphertext and the 8 byte authentication tag.
+ * \param m Buffer that contains the plaintext message to encrypt.
+ * \param mlen Length of the plaintext message in bytes.
+ * \param ad Buffer that contains associated data to authenticate
+ * along with the packet but which does not need to be encrypted.
+ * \param adlen Length of the associated data in bytes.
+ * \param npub Points to the public nonce for the packet which must
+ * be 12 bytes in length.
+ * \param k Points to the 24 bytes of the key to use to encrypt the packet.
+ *
+ * \sa tinyjambu_192_siv_decrypt()
+ */
+void tinyjambu_192_siv_encrypt
+    (unsigned char *c, size_t *clen,
+     const unsigned char *m, size_t mlen,
+     const unsigned char *ad, size_t adlen,
+     const unsigned char *npub,
+     const unsigned char *k);
+
+/**
+ * \brief Decrypts and authenticates a packet with TinyJAMBU-192 in SIV mode.
+ *
+ * \param m Buffer to receive the plaintext message on output.
+ * \param mlen Receives the length of the plaintext message on output.
+ * \param c Buffer that contains the ciphertext and authentication
+ * tag to decrypt.
+ * \param clen Length of the input data in bytes, which includes the
+ * ciphertext and the 8 byte authentication tag.
+ * \param ad Buffer that contains associated data to authenticate
+ * along with the packet but which does not need to be encrypted.
+ * \param adlen Length of the associated data in bytes.
+ * \param npub Points to the public nonce for the packet which must
+ * be 12 bytes in length.
+ * \param k Points to the 24 bytes of the key to use to decrypt the packet.
+ *
+ * \return 0 on success, -1 if the authentication tag was incorrect,
+ * or some other negative number if there was an error in the parameters.
+ *
+ * \sa tinyjambu_192_siv_encrypt()
+ */
+int tinyjambu_192_siv_decrypt
+    (unsigned char *m, size_t *mlen,
+     const unsigned char *c, size_t clen,
+     const unsigned char *ad, size_t adlen,
+     const unsigned char *npub,
+     const unsigned char *k);
+
+/**
+ * \brief Encrypts and authenticates a packet with TinyJAMBU-256 in SIV mode.
+ *
+ * \param c Buffer to receive the output.
+ * \param clen On exit, set to the length of the output which includes
+ * the ciphertext and the 8 byte authentication tag.
+ * \param m Buffer that contains the plaintext message to encrypt.
+ * \param mlen Length of the plaintext message in bytes.
+ * \param ad Buffer that contains associated data to authenticate
+ * along with the packet but which does not need to be encrypted.
+ * \param adlen Length of the associated data in bytes.
+ * \param npub Points to the public nonce for the packet which must
+ * be 12 bytes in length.
+ * \param k Points to the 32 bytes of the key to use to encrypt the packet.
+ *
+ * \sa tinyjambu_256_siv_decrypt()
+ */
+void tinyjambu_256_siv_encrypt
+    (unsigned char *c, size_t *clen,
+     const unsigned char *m, size_t mlen,
+     const unsigned char *ad, size_t adlen,
+     const unsigned char *npub,
+     const unsigned char *k);
+
+/**
+ * \brief Decrypts and authenticates a packet with TinyJAMBU-256 in SIV mode.
+ *
+ * \param m Buffer to receive the plaintext message on output.
+ * \param mlen Receives the length of the plaintext message on output.
+ * \param c Buffer that contains the ciphertext and authentication
+ * tag to decrypt.
+ * \param clen Length of the input data in bytes, which includes the
+ * ciphertext and the 8 byte authentication tag.
+ * \param ad Buffer that contains associated data to authenticate
+ * along with the packet but which does not need to be encrypted.
+ * \param adlen Length of the associated data in bytes.
+ * \param npub Points to the public nonce for the packet which must
+ * be 12 bytes in length.
+ * \param k Points to the 32 bytes of the key to use to decrypt the packet.
+ *
+ * \return 0 on success, -1 if the authentication tag was incorrect,
+ * or some other negative number if there was an error in the parameters.
+ *
+ * \sa tinyjambu_256_siv_encrypt()
+ */
+int tinyjambu_256_siv_decrypt
+    (unsigned char *m, size_t *mlen,
+     const unsigned char *c, size_t clen,
+     const unsigned char *ad, size_t adlen,
+     const unsigned char *npub,
+     const unsigned char *k);
+
 #ifdef __cplusplus
 }
 #endif

@@ -70,6 +70,46 @@ of the repository (or cloning it) into `libraries/TinyJAMBU` in your
 sketchbook directory.  Then re-launch the Arduino IDE and look for the
 TinyJAMBU examples under the File -> Examples submenu.
 
+Extensions
+----------
+
+This library provides the following extensions beyond the AEAD mode from
+the TinyJAMBU submission to the NIST Lightweight Cryptography Competition:
+
+* Synthetic Initialization Vector (SIV) Mode.
+
+### SIV Mode
+
+It is inadvisable to reuse the same key and nonce with the AEAD mode
+as the ciphertexts for different input plaintexts will be related.
+Reusing nonces can be used to break an otherwise sound encryption scheme.
+
+SIV provides a nonce misuse-resistant mode for TinyJAMBU.  It consists of
+two passes over the message to authenticate and then encrypt it.  The
+authentication tag from the first pass is used as part of the nonce to
+perform encryption in the second pass.
+
+If there is a single bit change in the plaintext of a message, then the
+resulting ciphertext will be completely different.  In other words,
+related plaintexts will not result in related ciphertexts.
+
+If the same key and nonce is used to encrypt the same plaintext again,
+then SIV mode will leak that the same message has been resent, but will
+not help the attacker decrypt the message.
+
+SIV is best used for key-wrapping.  If you need to store an asymmetric
+key pair in the device, then encrypt the key pair with SIV mode with
+the nonce set to the address in memory where the key pair will be stored.
+Replacing the encrypted key pair later with a new value will use the same
+nonce but the ciphertext will be unrelated to the original ciphertext.
+
+SIV can also be used for encrypting memory pages or disk blocks as long as
+you have enough extra space to store the 64-bit authentication tag for each
+page or block.  Without the tag it is impossible to decrypt the message.
+
+See the `README.md` file in the `tools/sivref` directory for a formal
+description of the SIV mode together with reference code.
+
 History
 -------
 
