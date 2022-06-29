@@ -21,82 +21,7 @@
  */
 
 #include "TinyJAMBU.h"
-#include "backend/tinyjambu-backend.h"
-#include "backend/tinyjambu-util.h"
-
-/**
- * \brief Set up the TinyJAMBU-256 state with the key and the nonce
- * and then absorbs the associated data.
- *
- * \param state TinyJAMBU state to be permuted.
- * \param nonce Points to the 96-bit nonce.
- * \param ad Points to the associated data.
- * \param adlen Length of the associated data in bytes.
- */
-static void tinyjambu_setup_256
-    (tinyjambu_256_state_t *state, const unsigned char *nonce,
-     const unsigned char *ad, size_t adlen)
-{
-    /* Initialize the state with the key */
-    tinyjambu_init_state(state);
-    tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(1280));
-
-    /* Absorb the three 32-bit words of the 96-bit nonce */
-    tinyjambu_add_domain(state, 0x10); /* Domain separator for the nonce */
-    tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-    tinyjambu_absorb(state, le_load_word32(nonce));
-    tinyjambu_add_domain(state, 0x10);
-    tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-    tinyjambu_absorb(state, le_load_word32(nonce + 4));
-    tinyjambu_add_domain(state, 0x10);
-    tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-    tinyjambu_absorb(state, le_load_word32(nonce + 8));
-
-    /* Process as many full 32-bit words of associated data as we can */
-    while (adlen >= 4) {
-        tinyjambu_add_domain(state, 0x30); /* Domain sep for associated data */
-        tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-        tinyjambu_absorb(state, le_load_word32(ad));
-        ad += 4;
-        adlen -= 4;
-    }
-
-    /* Handle the left-over associated data bytes, if any */
-    if (adlen == 1) {
-        tinyjambu_add_domain(state, 0x30);
-        tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-        tinyjambu_absorb(state, ad[0]);
-        tinyjambu_add_domain(state, 0x01);
-    } else if (adlen == 2) {
-        tinyjambu_add_domain(state, 0x30);
-        tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-        tinyjambu_absorb(state, le_load_word16(ad));
-        tinyjambu_add_domain(state, 0x02);
-    } else if (adlen == 3) {
-        tinyjambu_add_domain(state, 0x30);
-        tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-        tinyjambu_absorb
-            (state, le_load_word16(ad) | (((uint32_t)(ad[2])) << 16));
-        tinyjambu_add_domain(state, 0x03);
-    }
-}
-
-/**
- * \brief Generates the final authentication tag for TinyJAMBU-256.
- *
- * \param state TinyJAMBU state to be permuted.
- * \param tag Buffer to receive the tag.
- */
-static void tinyjambu_generate_tag_256
-    (tinyjambu_256_state_t *state, unsigned char *tag)
-{
-    tinyjambu_add_domain(state, 0x70); /* Domain separator for finalization */
-    tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(1280));
-    le_store_word32(tag, tinyjambu_squeeze(state));
-    tinyjambu_add_domain(state, 0x70);
-    tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-    le_store_word32(tag + 4, tinyjambu_squeeze(state));
-}
+#include "backend/tinyjambu-aead-common.h"
 
 void tinyjambu_256_aead_encrypt
     (unsigned char *c, size_t *clen,
@@ -122,7 +47,8 @@ void tinyjambu_256_aead_encrypt
     state.k[7] = tinyjambu_key_load_odd(k + 28);
 
     /* Set up the TinyJAMBU state with the key, nonce, and associated data */
-    tinyjambu_setup_256(&state, npub, ad, adlen);
+    tinyjambu_setup_256(&state, npub, 0x10);
+    tinyjambu_absorb_256(&state, ad, adlen, 0x30, TINYJAMBU_ROUNDS(640));
 
     /* Encrypt the plaintext to produce the ciphertext */
     while (mlen >= 4) {
@@ -196,7 +122,8 @@ int tinyjambu_256_aead_decrypt
     state.k[7] = tinyjambu_key_load_odd(k + 28);
 
     /* Set up the TinyJAMBU state with the key, nonce, and associated data */
-    tinyjambu_setup_256(&state, npub, ad, adlen);
+    tinyjambu_setup_256(&state, npub, 0x10);
+    tinyjambu_absorb_256(&state, ad, adlen, 0x30, TINYJAMBU_ROUNDS(640));
 
     /* Decrypt the ciphertext to produce the plaintext */
     clen -= TINYJAMBU_TAG_SIZE;

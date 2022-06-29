@@ -21,8 +21,7 @@
  */
 
 #include "TinyJAMBU.h"
-#include "backend/tinyjambu-backend.h"
-#include "backend/tinyjambu-util.h"
+#include "backend/tinyjambu-aead-common.h"
 #include <string.h>
 
 /*
@@ -57,37 +56,11 @@ typedef int tinyjambu_prng_state_size_check
             sizeof(tinyjambu_prng_state_t)) * 2 - 1];
 
 /* Nonce to use when initializing the PRNG in tinyjambu_prng_init() */
-static uint32_t const tinyjambu_prng_nonce[3] = {
-    /* "TinyJAMBUrng" in little-endian byte order */
-    0x796E6954, 0x424D414A, 0x676E7255
+static unsigned char const tinyjambu_prng_nonce[12] = {
+    'T', 'i', 'n', 'y', 'J', 'A', 'M', 'B', 'U', 'r', 'n', 'g'
 };
 
 /** @endcond */
-
-/**
- * \brief Sets up the PRNG state with a new key and nonce.
- *
- * \param state Points to the PRNG state, which already contains the key.
- * \param nonce Points to the three words (96 bits) of nonce data to use.
- */
-static void tinyjambu_prng_setup
-    (tinyjambu_256_state_t *state, const uint32_t *nonce)
-{
-    /* Initialize the state with the key */
-    tinyjambu_init_state(state);
-    tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(1280));
-
-    /* Absorb the three 32-bit words of the 96-bit nonce */
-    tinyjambu_add_domain(state, 0xA0); /* Domain separator for the nonce */
-    tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-    tinyjambu_absorb(state, nonce[0]);
-    tinyjambu_add_domain(state, 0xA0);
-    tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-    tinyjambu_absorb(state, nonce[1]);
-    tinyjambu_add_domain(state, 0xA0);
-    tinyjambu_permutation_256(state, TINYJAMBU_ROUNDS(640));
-    tinyjambu_absorb(state, nonce[2]);
-}
 
 /**
  * \brief Re-keys the PRNG.
@@ -109,7 +82,7 @@ static void tinyjambu_prng_rekey(tinyjambu_256_state_t *state)
 
     /* Re-initialize the PRNG state */
     memcpy(state->k, data, sizeof(state->k));
-    tinyjambu_prng_setup(state, data + 8);
+    tinyjambu_setup_256(state, (const unsigned char *)(data + 8), 0xA0);
 
     /* Clean up */
     tinyjambu_clean(data, sizeof(data));
@@ -133,7 +106,7 @@ void tinyjambu_prng_init
     }
 
     /* Set up the TinyJAMBU state using the initial key and nonce */
-    tinyjambu_prng_setup(&(pstate->state), tinyjambu_prng_nonce);
+    tinyjambu_setup_256(&(pstate->state), tinyjambu_prng_nonce, 0xA0);
 
     /* Immediately re-key the PRNG */
     tinyjambu_prng_rekey(&(pstate->state));
@@ -181,24 +154,9 @@ void tinyjambu_prng_feed
 {
     tinyjambu_prng_state_p_t *pstate = (tinyjambu_prng_state_p_t *)state;
 
-    /* Absorb as many 4 byte groups as we can */
-    while (size >= 4) {
-        tinyjambu_add_domain(&(pstate->state), 0x30);
-        tinyjambu_permutation_256(&(pstate->state), TINYJAMBU_ROUNDS(1280));
-        tinyjambu_absorb(state, le_load_word32(data));
-        data += 4;
-        size -= 4;
-    }
-
-    /* Handle the left-over bytes */
-    if (size > 0) {
-        uint32_t x = 0;
-        memcpy(&x, data, size);
-        tinyjambu_add_domain(&(pstate->state), 0x30);
-        tinyjambu_permutation_256(&(pstate->state), TINYJAMBU_ROUNDS(1280));
-        tinyjambu_absorb(state, x);
-        tinyjambu_add_domain(&(pstate->state), size);
-    }
+    /* Absorb the data into the state */
+    tinyjambu_absorb_256
+        (&(pstate->state), data, size, 0x30, TINYJAMBU_ROUNDS(1280));
 
     /* Re-key the PRNG */
     tinyjambu_prng_rekey(&(pstate->state));

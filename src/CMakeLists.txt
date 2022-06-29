@@ -35,6 +35,10 @@ list(APPEND TINYJAMBU_SOURCES
     backend/tinyjambu-256-asm-riscv64i.S
     backend/tinyjambu-256-asm-xtensa.S
     backend/tinyjambu-256-c32.c
+    backend/tinyjambu-aead-common-128.c
+    backend/tinyjambu-aead-common-192.c
+    backend/tinyjambu-aead-common-256.c
+    backend/tinyjambu-aead-common.h
     backend/tinyjambu-backend.h
     backend/tinyjambu-backend-select.h
     backend/tinyjambu-clean.c
