@@ -21,8 +21,8 @@
  */
 
 #include "TinyJAMBU.h"
-#include "tinyjambu-backend.h"
-#include "tinyjambu-util.h"
+#include "backend/tinyjambu-backend.h"
+#include "backend/tinyjambu-util.h"
 
 /**
  * \brief Set up the TinyJAMBU-128 state with the key and the nonce

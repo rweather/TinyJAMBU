@@ -21,7 +21,7 @@
  */
 
 #include "TinyJAMBU.h"
-#include "tinyjambu-backend.h"
+#include "backend/tinyjambu-backend.h"
 #include "test-cipher.h"
 #include <stdio.h>
 #include <string.h>

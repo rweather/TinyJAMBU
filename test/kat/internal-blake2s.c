@@ -21,7 +21,7 @@
  */
 
 #include "internal-blake2s.h"
-#include "tinyjambu-util.h"
+#include "backend/tinyjambu-util.h"
 #include <string.h>
 
 aead_hash_algorithm_t const internal_blake2s_hash_algorithm = {

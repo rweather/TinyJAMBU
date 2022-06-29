@@ -2,44 +2,44 @@
 list(APPEND TINYJAMBU_SOURCES
     TinyJAMBU.h
     tinyjambu-128-aead.c
-    tinyjambu-128-asm-avr5.S
-    tinyjambu-128-asm-armv6.S
-    tinyjambu-128-asm-armv6m.S
-    tinyjambu-128-asm-armv7m.S
-    tinyjambu-128-asm-riscv32e.S
-    tinyjambu-128-asm-riscv32i.S
-    tinyjambu-128-asm-riscv64i.S
-    tinyjambu-128-asm-xtensa.S
-    tinyjambu-128-c32.c
     tinyjambu-128-siv.c
     tinyjambu-192-aead.c
-    tinyjambu-192-asm-avr5.S
-    tinyjambu-192-asm-armv6.S
-    tinyjambu-192-asm-armv6m.S
-    tinyjambu-192-asm-armv7m.S
-    tinyjambu-192-asm-riscv32e.S
-    tinyjambu-192-asm-riscv32i.S
-    tinyjambu-192-asm-riscv64i.S
-    tinyjambu-192-asm-xtensa.S
-    tinyjambu-192-c32.c
     tinyjambu-192-siv.c
     tinyjambu-256-aead.c
-    tinyjambu-256-asm-avr5.S
-    tinyjambu-256-asm-armv6.S
-    tinyjambu-256-asm-armv6m.S
-    tinyjambu-256-asm-armv7m.S
-    tinyjambu-256-asm-riscv32e.S
-    tinyjambu-256-asm-riscv32i.S
-    tinyjambu-256-asm-riscv64i.S
-    tinyjambu-256-asm-xtensa.S
-    tinyjambu-256-c32.c
     tinyjambu-256-siv.c
-    tinyjambu-backend.h
-    tinyjambu-backend-select.h
-    tinyjambu-clean.c
     tinyjambu-prng.c
-    tinyjambu-util.c
-    tinyjambu-util.h
+    backend/tinyjambu-128-asm-avr5.S
+    backend/tinyjambu-128-asm-armv6.S
+    backend/tinyjambu-128-asm-armv6m.S
+    backend/tinyjambu-128-asm-armv7m.S
+    backend/tinyjambu-128-asm-riscv32e.S
+    backend/tinyjambu-128-asm-riscv32i.S
+    backend/tinyjambu-128-asm-riscv64i.S
+    backend/tinyjambu-128-asm-xtensa.S
+    backend/tinyjambu-128-c32.c
+    backend/tinyjambu-192-asm-avr5.S
+    backend/tinyjambu-192-asm-armv6.S
+    backend/tinyjambu-192-asm-armv6m.S
+    backend/tinyjambu-192-asm-armv7m.S
+    backend/tinyjambu-192-asm-riscv32e.S
+    backend/tinyjambu-192-asm-riscv32i.S
+    backend/tinyjambu-192-asm-riscv64i.S
+    backend/tinyjambu-192-asm-xtensa.S
+    backend/tinyjambu-192-c32.c
+    backend/tinyjambu-256-asm-avr5.S
+    backend/tinyjambu-256-asm-armv6.S
+    backend/tinyjambu-256-asm-armv6m.S
+    backend/tinyjambu-256-asm-armv7m.S
+    backend/tinyjambu-256-asm-riscv32e.S
+    backend/tinyjambu-256-asm-riscv32i.S
+    backend/tinyjambu-256-asm-riscv64i.S
+    backend/tinyjambu-256-asm-xtensa.S
+    backend/tinyjambu-256-c32.c
+    backend/tinyjambu-backend.h
+    backend/tinyjambu-backend-select.h
+    backend/tinyjambu-clean.c
+    backend/tinyjambu-util.c
+    backend/tinyjambu-util.h
 )
 
 if(NOT MINIMAL)

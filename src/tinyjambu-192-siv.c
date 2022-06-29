@@ -21,8 +21,8 @@
  */
 
 #include "TinyJAMBU.h"
-#include "tinyjambu-backend.h"
-#include "tinyjambu-util.h"
+#include "backend/tinyjambu-backend.h"
+#include "backend/tinyjambu-util.h"
 #include <string.h>
 
 /**

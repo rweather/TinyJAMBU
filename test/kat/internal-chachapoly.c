@@ -21,7 +21,7 @@
  */
 
 #include "internal-chachapoly.h"
-#include "tinyjambu-util.h"
+#include "backend/tinyjambu-util.h"
 #include <string.h>
 
 aead_cipher_t const internal_chachapoly_cipher = {
