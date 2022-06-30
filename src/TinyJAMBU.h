@@ -72,6 +72,11 @@ extern "C" {
 #define TINYJAMBU_NONCE_SIZE 12
 
 /**
+ * \brief Size of the hash output for TinyJAMBU-HASH.
+ */
+#define TINYJAMBU_HASH_SIZE 32
+
+/**
  * \brief Encrypts and authenticates a packet with TinyJAMBU-128.
  *
  * \param c Buffer to receive the output.
@@ -382,6 +387,60 @@ int tinyjambu_256_siv_decrypt
      const unsigned char *ad, size_t adlen,
      const unsigned char *npub,
      const unsigned char *k);
+
+/**
+ * \brief State information for TinyJAMBU-Hash.
+ */
+typedef struct
+{
+    /** Private state for the hash.  Must be treated as opaque */
+    unsigned long long s[56 / sizeof(unsigned long long)];
+
+} tinyjambu_hash_state_t;
+
+/**
+ * \brief Hashes a block of input data with TinyJAMBU-Hash.
+ *
+ * \param out Buffer to receive the hash output which must be at least
+ * TINYJAMBU_HASH_SIZE bytes in length.
+ * \param in Points to the input data to be hashed.
+ * \param inlen Length of the input data in bytes.
+ *
+ * \sa tinyjambu_hash_init(), tinyjambu_hash_update(), tinyjambu_hash_finalize()
+ */
+void tinyjambu_hash(unsigned char *out, const unsigned char *in, size_t inlen);
+
+/**
+ * \brief Initializes the state for an TinyJAMBU-Hash hashing operation.
+ *
+ * \param state Hash state to be initialized.
+ *
+ * \sa tinyjambu_hash_update(), tinyjambu_hash_finalize(), tinyjambu_hash()
+ */
+void tinyjambu_hash_init(tinyjambu_hash_state_t *state);
+
+/**
+ * \brief Updates an TinyJAMBU-Hash state with more input data.
+ *
+ * \param state Hash state to be updated.
+ * \param in Points to the input data to be incorporated into the state.
+ * \param inlen Length of the input data to be incorporated into the state.
+ *
+ * \sa tinyjambu_hash_init(), tinyjambu_hash_finalize()
+ */
+void tinyjambu_hash_update
+    (tinyjambu_hash_state_t *state, const unsigned char *in, size_t inlen);
+
+/**
+ * \brief Returns the final hash value from an TinyJAMBU-Hash hashing operation.
+ *
+ * \param state Hash state to be finalized.
+ * \param out Points to the output buffer to receive the hash value.
+ * Must be at least TINYJAMBU_HASH_SIZE bytes in length.
+ *
+ * \sa tinyjambu_hash_init(), tinyjambu_hash_update()
+ */
+void tinyjambu_hash_finalize(tinyjambu_hash_state_t *state, unsigned char *out);
 
 /**
  * \brief State information for a TinyJAMBU-based PRNG.

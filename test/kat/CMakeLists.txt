@@ -65,6 +65,7 @@ kat_test(TinyJAMBU-256 TinyJAMBU-256.txt "")
 kat_test(TinyJAMBU-128-SIV TinyJAMBU-128-SIV.txt "")
 kat_test(TinyJAMBU-192-SIV TinyJAMBU-192-SIV.txt "")
 kat_test(TinyJAMBU-256-SIV TinyJAMBU-256-SIV.txt "")
+kat_test(TinyJAMBU-Hash TinyJAMBU-HASH.txt "")
 
 # Add a custom 'perf' target to run all performance tests.
 add_custom_target(perf DEPENDS ${PERF_RULES})

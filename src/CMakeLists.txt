@@ -7,6 +7,7 @@ list(APPEND TINYJAMBU_SOURCES
     tinyjambu-192-siv.c
     tinyjambu-256-aead.c
     tinyjambu-256-siv.c
+    tinyjambu-hash.c
     tinyjambu-prng.c
     backend/tinyjambu-128-asm-avr5.S
     backend/tinyjambu-128-asm-armv6.S

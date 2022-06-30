@@ -91,6 +91,20 @@ aead_cipher_t const tinyjambu256_siv_cipher = {
     0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+aead_hash_algorithm_t const tinyjambu_hash_algorithm = {
+    "TinyJAMBU-Hash",
+    sizeof(tinyjambu_hash_state_t),
+    TINYJAMBU_HASH_SIZE,
+    AEAD_FLAG_NONE,
+    tinyjambu_hash,
+    (aead_hash_init_t)tinyjambu_hash_init,
+    0, /* init_fixed */
+    (aead_hash_update_t)tinyjambu_hash_update,
+    (aead_hash_finalize_t)tinyjambu_hash_finalize,
+    0, /* absorb */
+    0  /* squeeze */
+};
+
 /* List of all AEAD ciphers that we can run KAT tests for */
 static const aead_cipher_t *const ciphers[] = {
     &tinyjambu128_cipher,
@@ -104,6 +118,7 @@ static const aead_cipher_t *const ciphers[] = {
 
 /* List of all hash algorithms that we can run KAT tests for */
 static const aead_hash_algorithm_t *const hashes[] = {
+    &tinyjambu_hash_algorithm,
     0
 };
 
