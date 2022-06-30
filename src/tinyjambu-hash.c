@@ -28,7 +28,7 @@
 /**
  * \brief Number of TinyJAMBU rounds to use for hashing.
  */
-#define TINYJAMBU_HASH_ROUNDS TINYJAMBU_ROUNDS(5120)
+#define TINYJAMBU_HASH_ROUNDS TINYJAMBU_ROUNDS(2560)
 
 /**
  * \brief Private state information for TinyJAMBU-Hash.

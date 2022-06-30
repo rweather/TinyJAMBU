@@ -76,8 +76,31 @@ Extensions
 This library provides the following extensions beyond the AEAD mode from
 the TinyJAMBU submission to the NIST Lightweight Cryptography Competition:
 
-* Synthetic Initialization Vector (SIV) Mode
+* Hashing
+* Hashed Message Authentication Code (HMAC)
+* Synthetic Initialization Vector (SIV)
 * Pseudorandom Number Generator (PRNG)
+
+The security level of these experimental modes is presently unknown.
+They are not defined in the official TinyJAMBU submission to NIST.
+
+### Hashing Mode
+
+This library contains an experimental implementation of a hashing
+algorithm with a 256-bit output built around the TinyJAMBU-256 permutation.
+
+The hash uses the MDPH construction, similar to the Romulus-H submission
+to the third round of the NIST Lightweight Cryptography Competition (LWC).
+TinyJAMBU-256 is operated as a tweakable block cipher with an increased
+number of rounds.
+
+See the `README.md` file in the `tools/hashref` directory for a formal
+description of the hashing mode together with reference code.
+
+### HMAC Mode
+
+The hash algorithm is vulnerable to length extension attacks just like SHA256.
+So this library builds a HMAC mode on top of the hash in the standard manner.
 
 ### SIV Mode
 

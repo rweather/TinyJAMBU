@@ -45,17 +45,18 @@ The compression function is as follows:
         return (L', R')
 
 Encrypt(K, P) is an invocation of the TinyJAMBU-256 permutation with 256-bit
-key K and 128-bit state input P for 5120 rounds.
+key K and 128-bit state input P for 2560 rounds.
 
 In the AEAD construction, the TinyJAMBU-256 permutation is invoked with 1280
 rounds to process 32 bit blocks of plaintext.  This expands to 5120 rounds for
-each 128 bits of plaintext.
+each 128 bits of plaintext, which we divide evenly between the two calls to
+Encrypt.
 
 Security
 --------
 
 This construction is experimental and a full security analysis has not
-been done.
+been done yet.
 
 The TinyJAMBU specification makes the following claims for the security
 level of the AEAD mode:

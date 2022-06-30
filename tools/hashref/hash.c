@@ -7,7 +7,7 @@
 
 // NOTE: This implementation assumes that the machine is little-endian.
 
-#define NROUNDS (128*10*4) // 5120
+#define NROUNDS (128*10*2) // 2560
 
 extern void state_update(unsigned int *state, const unsigned char *key, unsigned int number_of_steps);
 
