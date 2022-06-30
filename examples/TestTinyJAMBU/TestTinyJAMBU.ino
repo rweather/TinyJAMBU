@@ -45,6 +45,8 @@ typedef int (*aead_cipher_decrypt_t)
      const unsigned char *ad, size_t adlen,
      const unsigned char *npub,
      const unsigned char *k);
+typedef void (*aead_hash_t)
+    (unsigned char *out, const unsigned char *in, size_t inlen);
 
 typedef struct
 {
@@ -355,6 +357,67 @@ void perfCipher(const aead_cipher_t *cipher, const char *sanity_vec)
     Serial.println();
 }
 
+// Reduce the maximum hash buffer size on Uno because there isn't enough RAM.
+#if defined(ARDUINO_AVR_UNO)
+#define HASH_BUFSIZ 512
+#else
+#define HASH_BUFSIZ 1024
+#endif
+
+static unsigned char hash_buffer[HASH_BUFSIZ];
+
+void perfHash_N(aead_hash_t hash_func, int size)
+{
+    unsigned long start;
+    unsigned long elapsed;
+    unsigned long long len;
+    int count, loops;
+
+    for (count = 0; count < size; ++count)
+        hash_buffer[count] = (unsigned char)count;
+
+    Serial.print("   hash ");
+    if (size < 1000) {
+        if (size < 100)
+            Serial.print("  ");
+        else
+            Serial.print(" ");
+    }
+    Serial.print(size);
+    Serial.print(" bytes ... ");
+
+    // Adjust the number of loops to do more loops on smaller sizes.
+    if (size < HASH_BUFSIZ)
+        loops = PERF_HASH_LOOPS * 4;
+    else
+        loops = PERF_HASH_LOOPS;
+
+    start = micros();
+    for (count = 0; count < loops; ++count) {
+        hash_func(ciphertext, hash_buffer, size);
+    }
+    elapsed = micros() - start;
+
+    Serial.print(elapsed / (((double)size) * loops));
+    Serial.print("us per byte, ");
+    Serial.print((1000000.0 * size * loops) / elapsed);
+    Serial.println(" bytes per second");
+}
+
+void perfHash(const char *name, aead_hash_t hash_func)
+{
+    crypto_feed_watchdog();
+    Serial.print(name);
+    Serial.print(':');
+    Serial.println();
+
+    perfHash_N(hash_func, HASH_BUFSIZ);
+    perfHash_N(hash_func, 128);
+    perfHash_N(hash_func, 16);
+
+    Serial.println();
+}
+
 void setup()
 {
     Serial.begin(9600);
@@ -372,6 +435,8 @@ void setup()
     perfCipher(&tinyjambu_128_cipher, "E30F24BBFC434EB18B92A3A4742BBAE61383F62BC9104E976569195FE559BC");
     perfCipher(&tinyjambu_192_cipher, "317B8563AFA9B731FDF1F29FA688D0B0280422844CFEBAEE75CCE206898F65");
     perfCipher(&tinyjambu_256_cipher, "D38B7389554B9C5DD8CA961C42CBE0017B102D0E01B82E91EAB122742F58F9");
+
+    perfHash("TinyJAMBU-Hash", tinyjambu_hash);
 }
 
 void loop()
