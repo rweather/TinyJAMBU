@@ -141,9 +141,11 @@ number source into an arbitrary amount of random data.  If the source
 has non-uniform entropy distribution, then the PRNG will hash the
 input to make the output more uniform.
 
-The PRNG uses a variation on the TinyJAMBU-256 AEAD mode.  The application
-must supply a function to fetch data from the system random number source
-and then the PRNG API takes care of the rest.
+The PRNG is based on Hash\_DRBG from section 10.1.1 of NIST Special
+Publication 800-90A Revision 1.  The hash algorithm is TinyJAMBU-Hash.
+
+The application must supply a function to fetch data from the system
+random number source and then the PRNG API takes care of the rest.
 
 The Arudino PRNG example demonstrates how to use the API to generate
 random data at runtime.

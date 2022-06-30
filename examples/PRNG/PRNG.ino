@@ -127,7 +127,7 @@ void setup()
     init_random();
 
     // Initialize the PRNG.
-    tinyjambu_prng_init(&prng, get_system_random, NULL);
+    tinyjambu_prng_init(&prng, get_system_random, NULL, NULL, 0);
 }
 
 void loop()

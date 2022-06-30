@@ -60,6 +60,7 @@ void tinyjambu_hash(unsigned char *out, const unsigned char *in, size_t inlen)
     tinyjambu_hash_init(&state);
     tinyjambu_hash_update(&state, in, inlen);
     tinyjambu_hash_finalize(&state, out);
+    tinyjambu_clean(&state, sizeof(state));
 }
 
 void tinyjambu_hash_init(tinyjambu_hash_state_t *state)

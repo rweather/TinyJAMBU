@@ -524,7 +524,7 @@ void tinyjambu_hmac_finalize
 typedef struct
 {
     /** Private state for the PRNG.  Must be treated as opaque */
-    unsigned long long s[64 / sizeof(unsigned long long)];
+    unsigned long long s[96 / sizeof(unsigned long long)];
 
 } tinyjambu_prng_state_t;
 
@@ -552,11 +552,17 @@ typedef size_t (*tinyjambu_prng_callback_t)
  * \param state Points to the PRNG state to be initialized.
  * \param callback Callback for obtaining entropy from the system
  * random number source.
- * \param user_data USer data pointer to supply to \a callback.
+ * \param user_data User data pointer to supply to \a callback.
+ * \param custom Points to a customization string to make this
+ * instantiation of the PRNG unique.
+ * \param custom_len Length of the customization string.
+ *
+ * \return Non-zero if enough data was obtained from the system random
+ * number source to seed the PRNG; or zero otherwise.
  */
-void tinyjambu_prng_init
+int tinyjambu_prng_init
     (tinyjambu_prng_state_t *state, tinyjambu_prng_callback_t callback,
-     void *user_data);
+     void *user_data, const unsigned char *custom, size_t custom_len);
 
 /**
  * \brief Frees a TinyJAMBU-based PRNG and destroys all sensitive material.
@@ -575,12 +581,12 @@ void tinyjambu_prng_free(tinyjambu_prng_state_t *state);
  * This function generates data based on the random entropy that has
  * already been incorporated into the PRNG state.
  *
- * If it has been some time since the last call to tinyjambu_prng_generate(),
- * then it is recommended that tinyjambu_prng_reseed() be called before this
- * function to fetch fresh entropy from the system random number source.
+ * This function will automatically reseed after every 1K of output.
  *
- * The PRNG will be rekeyed after the bytes are generated, or after every
- * 1K of generated data if \a size is greater than 1K.
+ * It is recommended that tinyjambu_prng_reseed() be called regularly by
+ * the application at other times when random numbers are not needed.
+ * This will ensure that fresh entropy is mixed in regularly to improve
+ * forward security.
  */
 void tinyjambu_prng_generate
     (tinyjambu_prng_state_t *state, unsigned char *data, size_t size);
@@ -607,8 +613,26 @@ void tinyjambu_prng_feed
  * \brief Reseeds a TinyJAMBU-based PRNG from the system random number source.
  *
  * \param state Points to the PRNG state to be reseeded.
+ *
+ * \return Non-zero if it was possible to obtain all requested seed
+ * material from the system random number source, or zero if the request
+ * could not be accomodated.
  */
-void tinyjambu_prng_reseed(tinyjambu_prng_state_t *state);
+int tinyjambu_prng_reseed(tinyjambu_prng_state_t *state);
+
+/**
+ * \brief Sets the reseeding limit for a TinyJAMBU-based PRNG.
+ *
+ * \param state Points to the PRNG state to be updated.
+ * \param limit Number of bytes to generate, after which the PRNG
+ * will be automatically reseeded.  Maximum of 1M, default is 1K.
+ *
+ * The \a limit will be rounded up to the next block size if it is not a
+ * multiple of 32.  Setting \a limit to zero will force the PRNG to be
+ * reseeded every time tinyjambu_prng_generate() is called.
+ */
+void tinyjambu_prng_set_reseed_limit
+    (tinyjambu_prng_state_t *state, size_t limit);
 
 /**
  * \brief Cleans a buffer that contains sensitive material.
