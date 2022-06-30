@@ -72,9 +72,14 @@ extern "C" {
 #define TINYJAMBU_NONCE_SIZE 12
 
 /**
- * \brief Size of the hash output for TinyJAMBU-HASH.
+ * \brief Size of the hash output for TinyJAMBU-Hash.
  */
 #define TINYJAMBU_HASH_SIZE 32
+
+/**
+ * \brief Default size of the output for TinyJAMBU-HMAC.
+ */
+#define TINYJAMBU_HMAC_SIZE TINYJAMBU_HASH_SIZE
 
 /**
  * \brief Encrypts and authenticates a packet with TinyJAMBU-128.
@@ -441,6 +446,72 @@ void tinyjambu_hash_update
  * \sa tinyjambu_hash_init(), tinyjambu_hash_update()
  */
 void tinyjambu_hash_finalize(tinyjambu_hash_state_t *state, unsigned char *out);
+
+/**
+ * \brief State information for the TINYJAMBU-HMAC incremental mode.
+ */
+typedef struct
+{
+    tinyjambu_hash_state_t hash;    /**< Internal TINYJAMBU-Hash state */
+
+} tinyjambu_hmac_state_t;
+
+/**
+ * \brief Computes a HMAC value using TINYJAMBU-HASH.
+ *
+ * \param out Buffer to receive the output HMAC value; must be at least
+ * TINYJAMBU_HMAC_SIZE bytes in length.
+ * \param key Points to the key.
+ * \param keylen Number of bytes in the key.
+ * \param in Points to the data to authenticate.
+ * \param inlen Number of bytes of data to authenticate.
+ */
+void tinyjambu_hmac
+    (unsigned char *out,
+     const unsigned char *key, size_t keylen,
+     const unsigned char *in, size_t inlen);
+
+/**
+ * \brief Initializes an incremental HMAC state using TINYJAMBU-HASH.
+ *
+ * \param state Points to the state to be initialized.
+ * \param key Points to the key.
+ * \param keylen Number of bytes in the key.
+ *
+ * The \a key needs to be preserved until the tinyjambu_hmac_finalize() call
+ * to provide the outer HMAC hashing key.
+ *
+ * \sa tinyjambu_hmac_update(), tinyjambu_hmac_finalize()
+ */
+void tinyjambu_hmac_init
+    (tinyjambu_hmac_state_t *state, const unsigned char *key, size_t keylen);
+
+/**
+ * \brief Updates an incremental TINYJAMBU-HMAC state with more input data.
+ *
+ * \param state HMAC state to be updated.
+ * \param in Points to the input data to be incorporated into the state.
+ * \param inlen Length of the input data to be incorporated into the state.
+ *
+ * \sa tinyjambu_hmac_init(), tinyjambu_hmac_finalize()
+ */
+void tinyjambu_hmac_update
+    (tinyjambu_hmac_state_t *state, const unsigned char *in, size_t inlen);
+
+/**
+ * \brief Finalizes an incremental TINYJAMBU-HMAC state.
+ *
+ * \param state HMAC state to squeeze the output data from.
+ * \param key Points to the key.
+ * \param keylen Number of bytes in the key.
+ * \param out Points to the output buffer to receive the HMAC value;
+ * must be at least TINYJAMBU_HMAC_SIZE bytes in length.
+ *
+ * \sa tinyjambu_hmac_init(), tinyjambu_hmac_update()
+ */
+void tinyjambu_hmac_finalize
+    (tinyjambu_hmac_state_t *state, const unsigned char *key, size_t keylen,
+     unsigned char *out);
 
 /**
  * \brief State information for a TinyJAMBU-based PRNG.

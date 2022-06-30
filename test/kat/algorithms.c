@@ -105,6 +105,30 @@ aead_hash_algorithm_t const tinyjambu_hash_algorithm = {
     0  /* squeeze */
 };
 
+static void tinyjambu_hmac_compute_wrapper
+    (unsigned char *tag, size_t taglen,
+     const unsigned char *key, size_t keylen,
+     const unsigned char *in, size_t inlen)
+{
+    (void)taglen;
+    tinyjambu_hmac(tag, key, keylen, in, inlen);
+}
+
+aead_auth_algorithm_t const tinyjambu_hmac_auth = {
+    "TinyJAMBU-HMAC",
+    sizeof(tinyjambu_hmac_state_t),
+    TINYJAMBU_HMAC_SIZE,
+    TINYJAMBU_HMAC_SIZE,
+    AEAD_FLAG_NONE,
+    tinyjambu_hmac_compute_wrapper,
+    0,
+    (auth_init_t)tinyjambu_hmac_init,
+    0,
+    (aead_xof_absorb_t)tinyjambu_hmac_update,
+    0,
+    (auth_hmac_finalize_t)tinyjambu_hmac_finalize
+};
+
 /* List of all AEAD ciphers that we can run KAT tests for */
 static const aead_cipher_t *const ciphers[] = {
     &tinyjambu128_cipher,
@@ -124,6 +148,7 @@ static const aead_hash_algorithm_t *const hashes[] = {
 
 /* List of all authentication algorithms that we can run KAT tests for */
 static const aead_auth_algorithm_t *const auths[] = {
+    &tinyjambu_hmac_auth,
     0
 };
 

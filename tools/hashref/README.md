@@ -2,9 +2,10 @@
 Reference code
 --------------
 
-This directory contains reference code for the TinyJAMBU-Hash algorithm,
-based on the reference implementation of TinyJAMBU-AEAD from the third
-round of the NIST Lightweight Cryptography Competition (LWC).
+This directory contains reference code for the TinyJAMBU-Hash and
+TinyJAMBU-HMAC algorithms, based on the reference implementation of
+TinyJAMBU-AEAD from the third round of the NIST Lightweight Cryptography
+Competition (LWC).
 
 Motivation
 ----------
@@ -19,8 +20,8 @@ existing session protocols like TLS or Noise.  The design of session
 protocols usually assume the presence of a hash algorithm to expand a
 limited amount of session key material into larger amounts via a KDF.
 
-Specification
--------------
+Specification of the hashing mode
+---------------------------------
 
 The hash uses the MDPH construction, similar to the Romulus-H submission
 to the third round of the NIST Lightweight Cryptography Competition (LWC).
@@ -68,3 +69,4 @@ is 224-bit.
 
 This construction is vulnerable to length extension attacks just like SHA256.
 Use of a HMAC-style mode for keyed hashing and key derivation is recommended.
+This directory also contains reference code for TinyJAMBU-HMAC.
