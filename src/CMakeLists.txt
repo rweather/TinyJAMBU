@@ -46,6 +46,15 @@ list(APPEND TINYJAMBU_SOURCES
     backend/tinyjambu-clean.c
     backend/tinyjambu-util.c
     backend/tinyjambu-util.h
+    random/tinyjambu-trng-dev-random.c
+    random/tinyjambu-trng-due.c
+    random/tinyjambu-trng-esp.c
+    random/tinyjambu-trng.h
+    random/tinyjambu-trng-none.c
+    random/tinyjambu-trng-select.h
+    random/tinyjambu-trng-stm32.c
+    random/tinyjambu-trng-stm32.h
+    random/tinyjambu-trng-windows.c
 )
 
 if(NOT MINIMAL)

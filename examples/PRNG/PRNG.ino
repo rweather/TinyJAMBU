@@ -35,70 +35,6 @@ input into the PRNG as additional entropy.
 
 #include <TinyJAMBU.h>
 
-// Determine how to generate random 32-bit words with this platform.
-#if defined(ESP8266)
-
-#define init_random() do { ; } while (0)
-#define get_random_word() (*((volatile uint32_t *)0x3FF20E44))
-
-#elif defined(ESP32)
-
-// It is variable from one ESP32 SDK to the next which header this
-// function is declared in, so we declare it ourselves.
-extern uint32_t esp_random(void);
-#define init_random() do { ; } while (0)
-#define get_random_word() esp_random()
-
-#elif defined(__arm__) && defined(__SAM3X8E__) // Arduino Due
-
-static void init_random()
-{
-    pmc_enable_periph_clk(ID_TRNG);
-    REG_TRNG_CR = TRNG_CR_KEY(0x524E47) | TRNG_CR_ENABLE;
-    REG_TRNG_IDR = TRNG_IDR_DATRDY;
-}
-
-static uint32_t get_random_word()
-{
-    // SAM3X8E's TRNG returns a new random word every 84 clock cycles.
-    // If the TRNG is not ready after 100 iterations, assume it has failed.
-    int count = 100;
-    while ((REG_TRNG_ISR & TRNG_ISR_DATRDY) == 0) {
-        if ((--count) <= 0)
-            return 0xABADBEEF; // This is a problem!
-    }
-    return REG_TRNG_ODATA;
-}
-
-#else
-
-#warning "Do not know how to generate random numbers on this platform"
-#define init_random() do { ; } while (0)
-#define get_random_word() 0xDEADBEEFU
-#define NO_RANDOM 1
-
-#endif
-
-// Callback from the PRNG to get random entropy from the system.
-static size_t get_system_random
-    (void *user_data, unsigned char *buf, size_t size)
-{
-    (void)user_data;
-    size_t temp = size;
-    while (temp > 0) {
-        uint32_t x = get_random_word();
-        if (temp >= sizeof(uint32_t)) {
-            memcpy(buf, &x, sizeof(uint32_t));
-            buf += sizeof(uint32_t);
-            temp -= sizeof(uint32_t);
-        } else {
-            memcpy(buf, &x, temp);
-            break;
-        }
-    }
-    return size;
-}
-
 static void print_hex(const unsigned char *data, unsigned size)
 {
     static const char hexchars[] = "0123456789abcdef";
@@ -118,16 +54,12 @@ void setup()
 {
     Serial.begin(9600);
     Serial.println();
-#if defined(NO_RANDOM)
-    Serial.println("WARNING: Do not know how to generate random numbers on this platform");
-    Serial.println();
-#endif
 
-    // Initialize the system random number source.
-    init_random();
-
-    // Initialize the PRNG.
-    tinyjambu_prng_init(&prng, get_system_random, NULL, NULL, 0);
+    // Initialize the random number generator.
+    if (!tinyjambu_prng_init(&prng, NULL, 0)) {
+        Serial.println("WARNING: Do not know how to generate random numbers on this platform");
+        Serial.println();
+    }
 }
 
 void loop()

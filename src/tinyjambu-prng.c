@@ -22,6 +22,7 @@
 
 #include "TinyJAMBU.h"
 #include "backend/tinyjambu-util.h"
+#include "random/tinyjambu-trng.h"
 #include <string.h>
 
 /*
@@ -112,8 +113,35 @@ static void tinyjambu_hash_prefixed
     tinyjambu_clean(&hash, sizeof(hash));
 }
 
-/* Hash_DRBG_Instantiate_algorithm from section 10.1.1.2 of SP.800-90Ar1 */
+/**
+ * \brief Default random number source for the system.
+ *
+ * \param user_data User data for the callback; ignored.
+ * \param buf Buffer to fill with random data.
+ * \param size Size of the buffer; ignored, assumed to be 32.
+ *
+ * \return Number of bytes that were fetched from the system TRNG.
+ */
+static size_t tinyjambu_prng_system
+    (void *user_data, unsigned char *buf, size_t size)
+{
+    (void)user_data;
+    if (tinyjambu_trng_generate(buf))
+        return size;
+    else
+        return 0;
+}
+
 int tinyjambu_prng_init
+    (tinyjambu_prng_state_t *state,
+     const unsigned char *custom, size_t custom_len)
+{
+    return tinyjambu_prng_init_user
+        (state, tinyjambu_prng_system, NULL, custom, custom_len);
+}
+
+/* Hash_DRBG_Instantiate_algorithm from section 10.1.1.2 of SP.800-90Ar1 */
+int tinyjambu_prng_init_user
     (tinyjambu_prng_state_t *state, tinyjambu_prng_callback_t callback,
      void *user_data, const unsigned char *custom, size_t custom_len)
 {
@@ -122,15 +150,17 @@ int tinyjambu_prng_init
 
     /* Initialize the state */
     memset(state, 0, sizeof(tinyjambu_prng_state_t));
-    pstate->callback = callback;
-    pstate->user_data = user_data;
+    if (callback) {
+        pstate->callback = callback;
+        pstate->user_data = user_data;
+    } else {
+        pstate->callback = tinyjambu_prng_system;
+    }
 
     /* Obtain entropy input from the system */
-    if (callback) {
-        if ((*callback)(user_data, pstate->V, sizeof(pstate->V))
-                == sizeof(pstate->V)) {
-            seeded = 1;
-        }
+    if ((*callback)(user_data, pstate->V, sizeof(pstate->V))
+            == sizeof(pstate->V)) {
+        seeded = 1;
     }
 
     /* seed_material = entropy_input || nonce || personalization_string */
@@ -245,12 +275,10 @@ int tinyjambu_prng_reseed(tinyjambu_prng_state_t *state)
      * then just mix things up a little using the previous V value which
      * will improve forward security even if there is no new entropy */
     memcpy(pstate->C, pstate->V, TINYJAMBU_SEED_LENGTH);
-    if (pstate->callback) {
-        if ((*(pstate->callback))
-                (pstate->user_data, pstate->C, sizeof(pstate->C))
-                    == sizeof(pstate->C)) {
-            reseeded = 1;
-        }
+    if ((*(pstate->callback))
+            (pstate->user_data, pstate->C, sizeof(pstate->C))
+                == sizeof(pstate->C)) {
+        reseeded = 1;
     }
 
     /* seed_material = 0x01 || V || entropy_input || additional_input */

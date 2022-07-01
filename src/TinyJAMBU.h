@@ -547,7 +547,24 @@ typedef size_t (*tinyjambu_prng_callback_t)
     (void *user_data, unsigned char *buf, size_t size);
 
 /**
- * \brief Initializes a TinyJAMBU-based PRNG.
+ * \brief Initializes a TinyJAMBU-based PRNG and seeds it from the
+ * default system random number source.
+ *
+ * \param state Points to the PRNG state to be initialized.
+ * \param custom Points to a customization string to make this
+ * instantiation of the PRNG unique.
+ * \param custom_len Length of the customization string.
+ *
+ * \return Non-zero if enough data was obtained from the system random
+ * number source to seed the PRNG; or zero otherwise.
+ */
+int tinyjambu_prng_init
+    (tinyjambu_prng_state_t *state,
+     const unsigned char *custom, size_t custom_len);
+
+/**
+ * \brief Initializes a TinyJAMBU-based PRNG with a user-supplied callback
+ * to access the system random number source.
  *
  * \param state Points to the PRNG state to be initialized.
  * \param callback Callback for obtaining entropy from the system
@@ -559,8 +576,10 @@ typedef size_t (*tinyjambu_prng_callback_t)
  *
  * \return Non-zero if enough data was obtained from the system random
  * number source to seed the PRNG; or zero otherwise.
+ *
+ * If \a callback is NULL, then a default source will be used.
  */
-int tinyjambu_prng_init
+int tinyjambu_prng_init_user
     (tinyjambu_prng_state_t *state, tinyjambu_prng_callback_t callback,
      void *user_data, const unsigned char *custom, size_t custom_len);
 
