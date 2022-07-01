@@ -1,0 +1,83 @@
+/*
+ * Copyright (C) 2022 Southern Storm Software, Pty Ltd.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+#include "TinyJAMBU.h"
+#include "backend/tinyjambu-util.h"
+#include <string.h>
+
+/* Implementation of the "F" function from RFC 8018, section 5.2 */
+static void tinyjambu_pbkdf2_f
+    (tinyjambu_hmac_state_t *state, unsigned char *T, unsigned char *U,
+     const unsigned char *password, size_t passwordlen,
+     const unsigned char *salt, size_t saltlen,
+     unsigned long count, unsigned long blocknum)
+{
+    unsigned char b[4];
+    be_store_word32(b, blocknum);
+    tinyjambu_hmac_init(state, password, passwordlen);
+    tinyjambu_hmac_update(state, salt, saltlen);
+    tinyjambu_hmac_update(state, b, sizeof(b));
+    tinyjambu_hmac_finalize(state, password, passwordlen, T);
+    if (count > 1) {
+        tinyjambu_hmac_reinit(state, password, passwordlen);
+        tinyjambu_hmac_update(state, T, TINYJAMBU_HMAC_SIZE);
+        tinyjambu_hmac_finalize(state, password, passwordlen, U);
+        lw_xor_block(T, U, TINYJAMBU_HMAC_SIZE);
+        while (count > 2) {
+            tinyjambu_hmac_reinit(state, password, passwordlen);
+            tinyjambu_hmac_update(state, U, TINYJAMBU_HMAC_SIZE);
+            tinyjambu_hmac_finalize(state, password, passwordlen, U);
+            lw_xor_block(T, U, TINYJAMBU_HMAC_SIZE);
+            --count;
+        }
+    }
+    tinyjambu_hmac_free(state);
+}
+
+void tinyjambu_pbkdf2
+    (unsigned char *out, size_t outlen,
+     const unsigned char *password, size_t passwordlen,
+     const unsigned char *salt, size_t saltlen, unsigned long count)
+{
+    tinyjambu_hmac_state_t state;
+    unsigned char U[TINYJAMBU_HMAC_SIZE];
+    unsigned long blocknum = 1;
+    while (outlen > 0) {
+        if (outlen >= TINYJAMBU_HMAC_SIZE) {
+            tinyjambu_pbkdf2_f
+                (&state, out, U, password, passwordlen,
+                 salt, saltlen, count, blocknum);
+            out += TINYJAMBU_HMAC_SIZE;
+            outlen -= TINYJAMBU_HMAC_SIZE;
+        } else {
+            unsigned char T[TINYJAMBU_HMAC_SIZE];
+            tinyjambu_pbkdf2_f
+                (&state, T, U, password, passwordlen,
+                 salt, saltlen, count, blocknum);
+            memcpy(out, T, outlen);
+            tinyjambu_clean(T, sizeof(T));
+            break;
+        }
+        ++blocknum;
+    }
+    tinyjambu_clean(U, sizeof(U));
+}

@@ -82,6 +82,12 @@ extern "C" {
 #define TINYJAMBU_HMAC_SIZE TINYJAMBU_HASH_SIZE
 
 /**
+ * \brief Default output block size for TinyJAMBU-PBKDF2.  Key material is
+ * generated in blocks of this size.
+ */
+#define TINYJAMBU_PBKDF2_SIZE TINYJAMBU_HASH_SIZE
+
+/**
  * \brief Encrypts and authenticates a packet with TinyJAMBU-128.
  *
  * \param c Buffer to receive the output.
@@ -425,6 +431,25 @@ void tinyjambu_hash(unsigned char *out, const unsigned char *in, size_t inlen);
 void tinyjambu_hash_init(tinyjambu_hash_state_t *state);
 
 /**
+ * \brief Re-initializes the state for an TinyJAMBU-Hash hashing operation.
+ *
+ * \param state Hash state to be re-initialized.
+ *
+ * This function is equivalent to calling tinyjambu_hash_free() and then
+ * tinyjambu_hash_init() to restart the hashing process.
+ *
+ * \sa tinyjambu_hash_init()
+ */
+void tinyjambu_hash_reinit(tinyjambu_hash_state_t *state);
+
+/**
+ * \brief Frees the TinyJAMBU-Hash state and destroys any sensitive material.
+ *
+ * \param state Hash state to be freed.
+ */
+void tinyjambu_hash_free(tinyjambu_hash_state_t *state);
+
+/**
  * \brief Updates an TinyJAMBU-Hash state with more input data.
  *
  * \param state Hash state to be updated.
@@ -485,6 +510,31 @@ void tinyjambu_hmac
  */
 void tinyjambu_hmac_init
     (tinyjambu_hmac_state_t *state, const unsigned char *key, size_t keylen);
+
+/**
+ * \brief Re-initializes an incremental HMAC state using TinyJAMBU-Hash.
+ *
+ * \param state Points to the state to be re-initialized.
+ * \param key Points to the key.
+ * \param keylen Number of bytes in the key.
+ *
+ * The \a key needs to be preserved until the tinyjambu_hmac_finalize() call
+ * to provide the outer HMAC hashing key.
+ *
+ * This function is equivalent to calling tinyjambu_hmac_free() followed by
+ * tinyjambu_hmac_init().
+ *
+ * \sa tinyjambu_hmac_init()
+ */
+void tinyjambu_hmac_reinit
+    (tinyjambu_hmac_state_t *state, const unsigned char *key, size_t keylen);
+
+/**
+ * \brief Frees the TinyJAMBU-HMAC state and destroys any sensitive material.
+ *
+ * \param state HMAC state to be freed.
+ */
+void tinyjambu_hmac_free(tinyjambu_hmac_state_t *state);
 
 /**
  * \brief Updates an incremental TINYJAMBU-HMAC state with more input data.
@@ -652,6 +702,101 @@ int tinyjambu_prng_reseed(tinyjambu_prng_state_t *state);
  */
 void tinyjambu_prng_set_reseed_limit
     (tinyjambu_prng_state_t *state, size_t limit);
+
+/**
+ * \brief Derives key material using TinyJAMBU-PBKDF2.
+ *
+ * \param out Points to the output buffer to receive the key material.
+ * \param outlen Number of bytes of key material to generate.
+ * \param password Points to the bytes of the password.
+ * \param passwordlen Number of bytes in the password.
+ * \param salt Points to the bytes of the salt.
+ * \param saltlen Number of bytes in the salt.
+ * \param count Number of iterations to perform.  If this is set to zero,
+ * then the value will be changed to 1.
+ *
+ * This function can generate a maximum of (2^32 - 1) *
+ * TINYJAMBU_PBKDF2_SIZE bytes, but this limit is not checked.
+ * The \a count value should be large enough to provide resistance
+ * against dictionary attacks on the password.
+ */
+void tinyjambu_pbkdf2
+    (unsigned char *out, size_t outlen,
+     const unsigned char *password, size_t passwordlen,
+     const unsigned char *salt, size_t saltlen, unsigned long count);
+
+/**
+ * \brief State for incremental generation of key material from TinyJAMBU-HKDF.
+ */
+typedef struct
+{
+    /** Private state for the HKDF algorithm.  Must be treated as opaque */
+    unsigned long long s[72 / sizeof(unsigned long long)];
+
+} tinyjambu_hkdf_state_t;
+
+/**
+ * \brief Derives key material using TinyJAMBU-HKDF.
+ *
+ * \param out Points to the output buffer to receive the key material.
+ * \param outlen Number of bytes of key material to generate, maximum of
+ * 8160 bytes.
+ * \param key Points to the bytes of the key.
+ * \param keylen Number of bytes in the key.
+ * \param salt Points to the bytes of the salt.
+ * \param saltlen Number of bytes in the salt.
+ * \param info Points to the bytes of the informational data.
+ * \param infolen Number of bytes in the informational data.
+ *
+ * \return Zero on success or -1 if \a outlen is out of range.
+ *
+ * \sa tinyjambu_hkdf_extract(), tinyjambu_hkdf_expand()
+ */
+int tinyjambu_hkdf
+    (unsigned char *out, size_t outlen,
+     const unsigned char *key, size_t keylen,
+     const unsigned char *salt, size_t saltlen,
+     const unsigned char *info, size_t infolen);
+
+/**
+ * \brief Extracts entropy from a key and salt for TinyJAMBU-HKDF.
+ *
+ * \param state HKDF state to be initialized.
+ * \param key Points to the bytes of the key.
+ * \param keylen Number of bytes in the key.
+ * \param salt Points to the bytes of the salt.
+ * \param saltlen Number of bytes in the salt.
+ *
+ * \sa tinyjambu_hkdf_expand(), tinyjambu_hkdf()
+ */
+void tinyjambu_hkdf_extract
+    (tinyjambu_hkdf_state_t *state,
+     const unsigned char *key, size_t keylen,
+     const unsigned char *salt, size_t saltlen);
+
+/**
+ * \brief Expands key material using a TinyJAMBU-HKDF state.
+ *
+ * \param state HKDF state to use to expand key material.
+ * \param info Points to the bytes of the informational data.
+ * \param infolen Number of bytes in the informational data.
+ * \param out Points to the output buffer to receive the key material.
+ * \param outlen Number of bytes of key material to generate.
+ *
+ * \return Zero on success or -1 if too many bytes have been generated so far.
+ * There is a limit of 8160 bytes.
+ */
+int tinyjambu_hkdf_expand
+    (tinyjambu_hkdf_state_t *state,
+     const unsigned char *info, size_t infolen,
+     unsigned char *out, size_t outlen);
+
+/**
+ * \brief Frees all sensitive material in a TinyJAMBU-HKDF state.
+ *
+ * \param state Points to the HKDF state.
+ */
+void tinyjambu_hkdf_free(tinyjambu_hkdf_state_t *state);
 
 /**
  * \brief Cleans a buffer that contains sensitive material.

@@ -60,7 +60,7 @@ void tinyjambu_hash(unsigned char *out, const unsigned char *in, size_t inlen)
     tinyjambu_hash_init(&state);
     tinyjambu_hash_update(&state, in, inlen);
     tinyjambu_hash_finalize(&state, out);
-    tinyjambu_clean(&state, sizeof(state));
+    tinyjambu_hash_free(&state);
 }
 
 void tinyjambu_hash_init(tinyjambu_hash_state_t *state)
@@ -82,6 +82,17 @@ void tinyjambu_hash_init(tinyjambu_hash_state_t *state)
     pstate->state.k[6] = 0;
     pstate->state.k[7] = 0;
     pstate->posn = 0;
+}
+
+void tinyjambu_hash_reinit(tinyjambu_hash_state_t *state)
+{
+    tinyjambu_hash_init(state);
+}
+
+void tinyjambu_hash_free(tinyjambu_hash_state_t *state)
+{
+    if (state)
+        tinyjambu_clean(state, sizeof(tinyjambu_hash_state_t));
 }
 
 static void tinyjambu_hash_compress

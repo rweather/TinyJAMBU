@@ -70,6 +70,18 @@ void tinyjambu_hmac_init
     tinyjambu_hmac_set_key(state, key, keylen, 0x36);
 }
 
+void tinyjambu_hmac_reinit
+    (tinyjambu_hmac_state_t *state, const unsigned char *key, size_t keylen)
+{
+    tinyjambu_hmac_set_key(state, key, keylen, 0x36);
+}
+
+void tinyjambu_hmac_free(tinyjambu_hmac_state_t *state)
+{
+    if (state)
+        tinyjambu_hash_free(&(state->hash));
+}
+
 void tinyjambu_hmac_update
     (tinyjambu_hmac_state_t *state, const unsigned char *in, size_t inlen)
 {

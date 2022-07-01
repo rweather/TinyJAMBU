@@ -96,7 +96,7 @@ static void tinyjambu_hash_df
     tinyjambu_hash_update(&hash, V, TINYJAMBU_SEED_LENGTH);
     tinyjambu_hash_update(&hash, in, inlen);
     tinyjambu_hash_finalize(&hash, out);
-    tinyjambu_clean(&hash, sizeof(hash));
+    tinyjambu_hash_free(&hash);
 }
 
 /* Prefixed Hash function */
@@ -110,7 +110,7 @@ static void tinyjambu_hash_prefixed
     tinyjambu_hash_update(&hash, &prefix, sizeof(prefix));
     tinyjambu_hash_update(&hash, V, TINYJAMBU_SEED_LENGTH);
     tinyjambu_hash_finalize(&hash, out);
-    tinyjambu_clean(&hash, sizeof(hash));
+    tinyjambu_hash_free(&hash);
 }
 
 /**

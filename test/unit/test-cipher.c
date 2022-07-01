@@ -21,6 +21,7 @@
  */
 
 #include "test-cipher.h"
+#include "TinyJAMBU.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -50,4 +51,36 @@ int test_memcmp
     test_print_hex("actual  ", actual, len);
     test_print_hex("expected", expected, len);
     return cmp;
+}
+
+/*
+ * The HKDF and PBKDF2 tests use TinyJAMBU-Hash to cross-check the actual
+ * code against simplified versions.
+ *
+ * The problem is that if the hash is broken the tests will appear to
+ * succeed because it is checking the broken hash against itself.
+ *
+ * This sanity check is used to make sure TinyJAMBU-Hash is basically
+ * working before falsely reporting that the modes work.
+ */
+int hash_sanity_check(void)
+{
+    static unsigned char const hash_expected[TINYJAMBU_HASH_SIZE] = {
+        0xcb, 0x58, 0x56, 0xd9, 0x57, 0x99, 0x8c, 0xae,
+        0x7f, 0xcb, 0xed, 0x7d, 0x0d, 0xf3, 0xd6, 0x37,
+        0xbb, 0x83, 0x13, 0xd7, 0xbd, 0xd7, 0xf3, 0x59,
+        0xb1, 0x5a, 0x96, 0x77, 0xf6, 0xf2, 0xe5, 0x84
+    };
+    unsigned char hash[TINYJAMBU_HASH_SIZE];
+    int ok = 1;
+    printf("Hash Sanity Check ...");
+    fflush(stdout);
+    tinyjambu_hash(hash, (const unsigned char *)"abc", 3);
+    if (test_memcmp(hash, hash_expected, sizeof(hash)) != 0)
+        ok = 0;
+    if (!ok)
+        printf("failed\n");
+    else
+        printf("ok\n");
+    return ok;
 }

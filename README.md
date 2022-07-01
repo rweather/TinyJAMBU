@@ -78,8 +78,10 @@ the TinyJAMBU submission to the NIST Lightweight Cryptography Competition:
 
 * Hashing
 * Hashed Message Authentication Code (HMAC)
+* HMAC-based Key Derivation Function (HKDF)
 * Synthetic Initialization Vector (SIV)
 * Pseudorandom Number Generator (PRNG)
+* Password-Based Key Derivation Function (PBKDF2)
 
 The security level of these experimental modes is presently unknown.
 They are not defined in the official TinyJAMBU submission to NIST.
