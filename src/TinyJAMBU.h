@@ -26,7 +26,7 @@
 #include <stddef.h>
 
 /**
- * \file tinyjambu.h
+ * \file TinyJAMBU.h
  * \brief TinyJAMBU authenticated encryption algorithm.
  *
  * TinyJAMBU is a family of encryption algorithms that are built around a
