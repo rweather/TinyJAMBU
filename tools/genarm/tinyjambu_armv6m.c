@@ -225,7 +225,9 @@ static void gen_tinyjambu_192(void)
     tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, 12);
     restore_r1();
     printf("\tsubs\tr1, r1, #1\n");
-    printf("\tbeq\t.L1922\n");  /* Early exit if the rounds are done */
+    printf("\tbne\t.L1923\n");  /* Early exit if the rounds are done */
+    printf("\tb\t.L1922\n");
+    printf(".L1923:\n");
     save_r1();
     tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, 16);
     tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, 20);
@@ -233,7 +235,9 @@ static void gen_tinyjambu_192(void)
     tinyjambu_steps_32(&regs, regs.s3, regs.s0, regs.s1, regs.s2, 4);
     restore_r1();
     printf("\tsubs\tr1, r1, #1\n");
-    printf("\tbeq\t.L1922\n");  /* Early exit if the rounds are done */
+    printf("\tbne\t.L1924\n");  /* Early exit if the rounds are done */
+    printf("\tb\t.L1922\n");
+    printf(".L1924:\n");
     save_r1();
     tinyjambu_steps_32(&regs, regs.s0, regs.s1, regs.s2, regs.s3, 8);
     tinyjambu_steps_32(&regs, regs.s1, regs.s2, regs.s3, regs.s0, 12);
@@ -243,7 +247,8 @@ static void gen_tinyjambu_192(void)
 
     /* Bottom of the round loop */
     printf("\tsubs\tr1, r1, #1\n");
-    printf("\tbne\t.L1921\n");
+    printf("\tbeq\t.L1922\n");
+    printf("\tb\t.L1921\n");
 
     /* Store the words back to the state and exit */
     printf(".L1922:\n");

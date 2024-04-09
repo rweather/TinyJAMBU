@@ -113,7 +113,9 @@ tinyjambu_permutation_192:
 	eors	r5, r6
 	mov	r1, ip
 	subs	r1, r1, #1
-	beq	.L1922
+	bne	.L1923
+	b	.L1922
+.L1923:
 	mov	ip, r1
 	lsrs	r6, r3, #15
 	lsls	r7, r4, #17
@@ -189,7 +191,9 @@ tinyjambu_permutation_192:
 	eors	r5, r6
 	mov	r1, ip
 	subs	r1, r1, #1
-	beq	.L1922
+	bne	.L1924
+	b	.L1922
+.L1924:
 	mov	ip, r1
 	lsrs	r6, r3, #15
 	lsls	r7, r4, #17
@@ -265,7 +269,8 @@ tinyjambu_permutation_192:
 	eors	r5, r6
 	mov	r1, ip
 	subs	r1, r1, #1
-	bne	.L1921
+	beq	.L1922
+	b	.L1921
 .L1922:
 	str	r2, [r0, #0]
 	str	r3, [r0, #4]
