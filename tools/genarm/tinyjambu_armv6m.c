@@ -295,7 +295,8 @@ static void gen_tinyjambu_256(void)
 
     /* Bottom of the round loop */
     printf("\tsubs\tr1, r1, #1\n");
-    printf("\tbne\t.L2561\n");
+    printf("\tbeq\t.L2562\n");
+    printf("\tb\t.L2561\n");
 
     /* Store the words back to the state and exit */
     printf(".L2562:\n");

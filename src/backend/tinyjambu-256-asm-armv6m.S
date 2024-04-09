@@ -189,7 +189,8 @@ tinyjambu_permutation_256:
 	eors	r5, r6
 	mov	r1, ip
 	subs	r1, r1, #1
-	bne	.L2561
+	beq	.L2562
+	b	.L2561
 .L2562:
 	str	r2, [r0, #0]
 	str	r3, [r0, #4]
